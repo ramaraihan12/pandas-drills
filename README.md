@@ -51,7 +51,7 @@ Solo practice needs no server. For my own students I also wanted to see who is s
 
 **Try it without a class.** [`#/demo-class`](https://ramaraihan.is-a.dev/pandas-drills/#/demo-class) shows the same dashboard for a made-up class of 18 students ("Student 01" and so on). It is a static file, `public/demo/report.json`, written by `node scripts/make-demo-class.mjs` from a fixed seed, so it needs no API and works on the live site today. Nothing in it is real, and it has no code to show.
 
-The class features are switched on once the API is deployed. Until then (and on today's live build) none of the class pages or links appear and the site behaves exactly as before. The API is a small Cloudflare Worker with a D1 database in [`api/`](api/README.md).
+Classes are live: a teacher can create one from the "Teaching? Create a class" link on the site. The API is a small Cloudflare Worker with a D1 database on the free plan, in [`api/`](api/README.md). If the free daily limits are ever reached, class requests fail until 00:00 UTC; solo practice keeps working because it never talks to the API.
 
 **What is stored:** the class name, each student's nickname, and for every Check the exercise, whether it passed, the kind of result, the code and the time. The teacher key and the student tokens are stored only as SHA-256 hashes. **What is not stored:** no email, no IP address, no user agent, no full names, no accounts. The Worker has logging switched off and never writes request bodies or headers anywhere.
 
