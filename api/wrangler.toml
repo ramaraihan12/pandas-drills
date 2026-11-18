@@ -16,3 +16,8 @@ database_name = "pandas-drills"
 # `wrangler d1 create pandas-drills` before deploying (see README.md).
 database_id = "00000000-0000-0000-0000-000000000000"
 migrations_dir = "migrations"
+
+# One daily cleanup of expired classes (03:17 UTC). The same cleanup also runs, in small
+# chunks, when a class is created or joined and when a report is opened.
+[triggers]
+crons = ["17 3 * * *"]
