@@ -6,7 +6,7 @@ The class backend for [pandas drills](../README.md): a Cloudflare Worker (plain 
 
 | Method and path | Who | What |
 | --- | --- | --- |
-| `POST /classes` `{name}` | anyone | makes a class, returns `{code, teacherKey, expiresAt}` |
+| `POST /classes` `{name, turnstileToken}` | anyone, after a Turnstile check | makes a class, returns `{code, teacherKey, expiresAt}` |
 | `GET /classes/:code` | anyone | `{name, expiresAt}` for the join page |
 | `POST /classes/:code/join` `{nickname}` | anyone | returns `{studentToken, nickname}` |
 | `POST /submissions` `{exerciseId, passed, kind, code}` | student token | records a Check, answers 204 |
@@ -15,6 +15,8 @@ The class backend for [pandas drills](../README.md): a Cloudflare Worker (plain 
 | `POST /classes/:code/joining` `{open}` | teacher key | closes or reopens joining (a closed class answers 403 to new students) |
 | `DELETE /classes/:code/students/:id` | teacher key | removes one student and their submissions |
 | `DELETE /classes/:code` | teacher key | deletes the class and everything in it |
+
+Class creation is the only call with a bot check. The Worker verifies `turnstileToken` with Cloudflare Turnstile (`siteverify`, 4 second timeout) before it writes anything or counts the class against the daily limit. It sends only the secret and the token, never the visitor's IP, and never logs the token. A failed check answers 403; with no `TURNSTILE_SECRET` configured it answers 503 "Class creation is not configured" (it fails closed). When `DEV_ORIGINS` is set (local development) the check is skipped. Joining and sending Checks have no bot check, so students never see it.
 
 POST bodies must be `application/json` (415 otherwise). A request with an `Origin` header that is not allowed gets 403. The report reads only `student_exercise`, one summary row per student and exercise that is updated in the same batch as each submission.
 
@@ -44,7 +46,14 @@ cd api
 npx wrangler login
 npx wrangler d1 create pandas-drills          # copy the printed database_id into wrangler.toml
 npx wrangler d1 migrations apply pandas-drills --remote
+npx wrangler secret put TURNSTILE_SECRET       # the secret key of a Turnstile widget (free); without it no class can be created
 npx wrangler deploy                            # prints https://pandas-drills-api.<account>.workers.dev
+```
+
+The widget's public site key goes in a repository variable that the Pages build passes to the site as `VITE_TURNSTILE_SITEKEY`:
+
+```
+gh variable set TURNSTILE_SITEKEY --repo ramaraihan12/pandas-drills --body "<site key>"
 ```
 
 Then set the repository variable that switches the class pages on, and re-run the Pages workflow:

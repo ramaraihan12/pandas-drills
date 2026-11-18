@@ -74,7 +74,8 @@ export function createApi(base: string, doFetch: Fetch = (...a) => fetch(...a)) 
   }
   const enc = encodeURIComponent;
   return {
-    createClass: (name: string) => request<{ code: string; teacherKey: string; expiresAt: string }>("POST", "/classes", { body: { name } }),
+    createClass: (name: string, turnstileToken: string) =>
+      request<{ code: string; teacherKey: string; expiresAt: string }>("POST", "/classes", { body: { name, turnstileToken } }),
     getClass: (code: string) => request<{ name: string; expiresAt: string }>("GET", `/classes/${enc(code)}`),
     join: (code: string, nickname: string) => request<{ studentToken: string; nickname: string }>("POST", `/classes/${enc(code)}/join`, { body: { nickname } }),
     submit: (token: string, body: SubmissionBody) => request<void>("POST", "/submissions", { body, token }),

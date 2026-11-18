@@ -1,1 +1,4 @@
 DEV_ORIGINS=http://localhost:5173,http://localhost:4173
+# Cloudflare's documented test secret (always passes). While DEV_ORIGINS is set the check is skipped anyway.
+# Pair it with the test site key 1x00000000000000000000AA in VITE_TURNSTILE_SITEKEY when you build the site locally.
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA

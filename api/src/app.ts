@@ -7,7 +7,12 @@ export interface Env {
   DB: D1Database;
   /** Comma-separated extra origins (local dev ports). Set in .dev.vars or the test env, never in production. */
   DEV_ORIGINS?: string;
+  /** Cloudflare Turnstile secret key (`wrangler secret put TURNSTILE_SECRET`). Class creation is refused without it, except in local dev. */
+  TURNSTILE_SECRET?: string;
 }
+
+const SITEVERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+const SITEVERIFY_TIMEOUT_MS = 4000;
 
 export const LIMITS = {
   classLifetimeMs: 180 * 24 * 3600 * 1000,
@@ -178,9 +183,37 @@ function validClassName(raw: unknown): string {
 
 // ---------- handlers ----------
 
+/**
+ * The Turnstile check on class creation. Fails closed: no secret means no new classes, except in local
+ * dev (DEV_ORIGINS set), where it is skipped. Only the secret and the token are sent, never the visitor's IP,
+ * and the token is never logged or stored.
+ */
+async function requireHuman(env: Env, token: unknown) {
+  if (env.DEV_ORIGINS) return;
+  const secret = env.TURNSTILE_SECRET;
+  if (!secret) throw new HttpError(503, "Class creation is not configured");
+  const failed = new HttpError(403, "The bot check failed. Reload the page and try again.");
+  if (typeof token !== "string" || token === "" || token.length > 2048) throw failed;
+  let verdict: { success?: unknown };
+  try {
+    const res = await fetch(SITEVERIFY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ secret, response: token }),
+      signal: AbortSignal.timeout(SITEVERIFY_TIMEOUT_MS),
+    });
+    if (res.status >= 500) throw new Error("siteverify unavailable");
+    verdict = (await res.json()) as { success?: unknown };
+  } catch {
+    throw new HttpError(503, "The bot check is not available right now. Please try again in a moment.");
+  }
+  if (verdict.success !== true) throw failed;
+}
+
 async function createClass(request: Request, env: Env) {
   const body = await readJson(request);
   const name = validClassName(body.name);
+  await requireHuman(env, body.turnstileToken); // before any write and before the daily counter
 
   const now = Date.now();
   await cleanupExpired(env, now);

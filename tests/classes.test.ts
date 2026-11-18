@@ -117,6 +117,16 @@ describe("api client", () => {
     await expect(api.join("ABC234", "Ann")).rejects.toMatchObject({ status: 409, message: "That nickname is taken in this class" });
     await expect(api.join("ABC234", "Ann")).rejects.toBeInstanceOf(ApiError);
   });
+  it("sends the bot check token in the body when a class is created, and only then", async () => {
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ code: "ABC234", teacherKey: "k", expiresAt: "x" }), { status: 201 }));
+    const api = createApi("http://api.test", fetchMock as unknown as typeof fetch);
+    await api.createClass("Data 101", "tok-123");
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe("http://api.test/classes");
+    expect(JSON.parse(String(init.body))).toEqual({ name: "Data 101", turnstileToken: "tok-123" });
+    await api.join("ABC234", "Ann");
+    expect(String((fetchMock.mock.calls[1] as unknown as [string, RequestInit])[1].body)).not.toContain("turnstile");
+  });
   it("treats 204 as success", async () => {
     const api = createApi("http://api.test", (async () => new Response(null, { status: 204 })) as typeof fetch);
     await expect(api.submit("t", body(1))).resolves.toBeUndefined();

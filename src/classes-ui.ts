@@ -7,6 +7,7 @@ import { cellLabel } from "./lib/dashboard.ts";
 import { kindLabel } from "./lib/kinds.ts";
 import { loadAttempts, loadDemoReport, loadReport, removeClass, removeStudent, setJoining } from "./lib/report.ts";
 import { forgetTeacherKey, readTeacherKey } from "./lib/teacherKey.ts";
+import { BOT_CHECK_TEXT, TURNSTILE_SITEKEY, loadTurnstile } from "./lib/turnstile.ts";
 import { joinLink, teachLink } from "./lib/route.ts";
 import type { createSessions } from "./lib/session.ts";
 
@@ -88,21 +89,62 @@ export function renderNewClass(deps: ClassUiDeps) {
   const input = el("input", { type: "text", id: "class-name", maxLength: 60, required: true, autocomplete: "off" });
   const status = el("p", { class: "form-error", role: "alert" });
   const submit = el("button", { type: "submit", class: "btn primary" }, "Create the class");
+  submit.disabled = true; // until the bot check gives a token
+  const botBox = el("div", { id: "bot-check", class: "bot-check" });
+  const botNote = el("p", { class: "hint", id: "bot-check-note" }, BOT_CHECK_TEXT.loading);
   const form = el(
     "form",
     {},
     el("label", { htmlFor: "class-name" }, "Class name"),
     input,
     el("p", { class: "hint" }, "Something your students will recognise, up to 60 characters."),
+    botBox,
+    botNote,
     status,
     submit,
   );
+  let token = "";
+  let widget: string | undefined;
+  let api: Awaited<ReturnType<typeof loadTurnstile>> | undefined;
+  const waiting = (text: string) => {
+    token = "";
+    submit.disabled = true;
+    botNote.textContent = text;
+  };
+  const resetWidget = (text: string) => {
+    waiting(text);
+    if (api && widget !== undefined) api.reset(widget);
+  };
+  if (!TURNSTILE_SITEKEY) {
+    waiting(BOT_CHECK_TEXT.missing);
+  } else {
+    loadTurnstile().then(
+      (t) => {
+        api = t;
+        if (!botBox.isConnected) return; // the page was left before the script arrived
+        widget = t.render(botBox, {
+          sitekey: TURNSTILE_SITEKEY,
+          callback: (value) => {
+            token = value;
+            submit.disabled = false;
+            botNote.textContent = "";
+          },
+          "expired-callback": () => resetWidget(BOT_CHECK_TEXT.expired),
+          "error-callback": () => resetWidget(BOT_CHECK_TEXT.error),
+          "timeout-callback": () => resetWidget(BOT_CHECK_TEXT.expired),
+        });
+        botNote.textContent = BOT_CHECK_TEXT.ready;
+      },
+      () => waiting(BOT_CHECK_TEXT.blocked),
+    );
+  }
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (!token) return;
     status.textContent = "";
     submit.disabled = true;
     try {
-      const made = await deps.api.createClass(input.value);
+      const made = await deps.api.createClass(input.value, token);
       const expires = new Date(made.expiresAt).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
       show(
         deps,
@@ -126,7 +168,8 @@ export function renderNewClass(deps: ClassUiDeps) {
       );
     } catch (err) {
       status.textContent = errorText(err);
-      submit.disabled = false;
+      // a token works once, so whatever went wrong the student needs a fresh one
+      resetWidget(BOT_CHECK_TEXT.ready);
     }
   });
   show(deps, el("section", { class: "panel narrow" }, el("h2", {}, "Create a class"), el("p", { class: "muted" }, "Students join with a link and a nickname. Every Check they make is recorded for you."), form, back(deps)));
