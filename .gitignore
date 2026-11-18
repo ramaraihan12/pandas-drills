@@ -20,3 +20,8 @@ src/generated/
 e2e/out/
 playwright-report/
 test-results/
+
+# cloudflare worker (api/)
+.wrangler/
+.dev.vars
+api/src/generated/

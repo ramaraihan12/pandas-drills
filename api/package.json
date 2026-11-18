@@ -1,0 +1,22 @@
+{
+  "name": "pandas-drills-api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Class API for pandas drills: a Cloudflare Worker with D1",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "ids": "node scripts/gen-ids.mjs",
+    "dev": "npm run ids && wrangler dev --local --persist-to .wrangler/state",
+    "migrate:local": "wrangler d1 migrations apply DB --local --persist-to .wrangler/state",
+    "typecheck": "npm run ids && tsc --noEmit",
+    "test": "npm run ids && vitest run"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "1.8.4",
+    "@cloudflare/workers-types": "5.20261118.1",
+    "typescript": "7.0.2",
+    "vitest": "4.1.0",
+    "wrangler": "4.164.0"
+  }
+}
