@@ -8,7 +8,7 @@ const PYODIDE_BASE = "https://cdn.jsdelivr.net/pyodide/v__PYODIDE_VERSION__/full
 const SHELL_FILES = __SHELL_FILES__;
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(SHELL_CACHE).then((c) => c.addAll(SHELL_FILES)).then(() => self.skipWaiting()));
+  event.waitUntil(caches.open(SHELL_CACHE).then((c) => c.addAll(SHELL_FILES.map((u) => new Request(u, { cache: "reload" })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (event) => {
@@ -32,7 +32,7 @@ async function cacheFirst(request, cacheName) {
 async function networkFirst(request) {
   const cache = await caches.open(SHELL_CACHE);
   try {
-    const res = await fetch(request);
+    const res = await fetch(request, { cache: "no-cache" });
     if (res.ok) cache.put(request, res.clone());
     return res;
   } catch (err) {

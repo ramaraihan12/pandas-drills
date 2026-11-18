@@ -5,7 +5,9 @@ export type EngineState =
   | { kind: "loading"; loaded: number; stage: string }
   | { kind: "ready"; info: string; transferred: number }
   | { kind: "restarting" }
-  | { kind: "failed"; message: string };
+  | { kind: "failed"; message: string }
+  /** The worker script could not be loaded, usually because a new version was deployed. */
+  | { kind: "stale" };
 
 export type RunOutcome = { ok: true; result: GradeResult } | { ok: false; failure: ClientFailure };
 
@@ -28,8 +30,10 @@ export class Runner {
   private start(restart: boolean) {
     this.ready = false;
     this.onState(restart ? { kind: "restarting" } : { kind: "loading", loaded: 0, stage: "Starting Python" });
+    let heardFromWorker = false;
     this.worker = new Worker(new URL("./worker/pyodide.worker.ts", import.meta.url), { type: "module" });
     this.worker.onmessage = (e: MessageEvent) => {
+      heardFromWorker = true;
       const m = e.data as Record<string, unknown>;
       if (m.type === "progress") {
         this.onState({ kind: "loading", loaded: m.loaded as number, stage: String(m.stage) });
@@ -42,11 +46,17 @@ export class Runner {
         this.settle(m.id as number, { ok: true, result: m.result as GradeResult });
       } else if (m.type === "failure") {
         this.settle(m.id as number, { ok: false, failure: { kind: "worker_error", message: String(m.message) } });
+        // the engine may be in a bad state: start a clean one, like after a timeout
+        this.worker.terminate();
+        this.start(true);
       } else if (m.type === "fatal") {
         this.onState({ kind: "failed", message: String(m.message) });
       }
     };
-    this.worker.onerror = (e) => this.onState({ kind: "failed", message: e.message || "worker error" });
+    this.worker.onerror = (e) => {
+      // an error before the first message means the script itself did not load
+      this.onState(heardFromWorker ? { kind: "failed", message: e.message || "worker error" } : { kind: "stale" });
+    };
   }
 
   private settle(id: number, outcome: RunOutcome) {

@@ -65,6 +65,17 @@ function onEngine(s: EngineState) {
     els.engine.hidden = true;
     els.engineInfo.textContent = `${s.info}. Runs in your browser.`;
     els.engineInfo.dataset.transferredBytes = String(s.transferred);
+  } else if (s.kind === "stale") {
+    engineReady = false;
+    els.engine.hidden = false;
+    els.engine.classList.add("failed");
+    els.engineBar.hidden = true;
+    els.engineText.textContent = "A new version is available, reload the page. ";
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "Reload";
+    btn.addEventListener("click", () => location.reload());
+    els.engineText.append(btn);
   } else {
     engineReady = false;
     els.engine.hidden = false;
