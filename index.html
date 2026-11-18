@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="pandas exercises that run and grade themselves in your browser. No install, no server." />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <title>pandas drills</title>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to the exercise</a>
+    <header class="top">
+      <div class="brand">
+        <h1>pandas drills</h1>
+        <p class="note">Everything, including the checking, runs in your browser. That makes this practice, not an exam.</p>
+      </div>
+      <button id="nav-toggle" class="btn ghost" type="button" aria-expanded="false" aria-controls="exercise-nav">
+        Exercises <span id="progress-count" class="count"></span>
+      </button>
+    </header>
+
+    <div id="engine" class="engine" role="status" aria-live="polite">
+      <p id="engine-text">Getting Python ready...</p>
+      <progress id="engine-bar" max="100" value="0" aria-label="Python download progress"></progress>
+    </div>
+
+    <div class="layout">
+      <nav id="exercise-nav" class="nav" aria-label="Exercises">
+        <ol id="exercise-list"></ol>
+        <p class="nav-foot"><button id="reset" class="link" type="button">Reset my progress</button></p>
+      </nav>
+
+      <main id="main" tabindex="-1">
+        <section class="panel prompt" aria-labelledby="ex-title">
+          <p class="meta"><span id="ex-meta"></span></p>
+          <h2 id="ex-title"></h2>
+          <div id="ex-prompt" class="prose"></div>
+          <p class="meta" id="ex-vars"></p>
+        </section>
+
+        <section class="panel editor" aria-label="Your code">
+          <div id="editor-host" class="editor-host"></div>
+          <p class="hint">Run: Ctrl+Enter. Check: Ctrl+Shift+Enter. Tab indents; to leave the editor with the keyboard, press Ctrl+M first, then Tab.</p>
+          <div class="actions">
+            <button id="run" class="btn" type="button" disabled>Run</button>
+            <button id="check" class="btn primary" type="button" disabled>Check</button>
+            <button id="reset-code" class="btn ghost" type="button">Start over</button>
+            <span id="done-badge" class="badge" hidden>Done</span>
+          </div>
+        </section>
+
+        <section class="panel output" aria-labelledby="out-title">
+          <h3 id="out-title">Result</h3>
+          <div id="output" class="output-body" aria-live="polite">
+            <p class="muted">Press Run to see your result, or Check to compare it with the expected answer.</p>
+          </div>
+        </section>
+
+        <section class="panel data" aria-labelledby="data-title">
+          <h3 id="data-title">Data you start with</h3>
+          <div id="data-preview"></div>
+        </section>
+      </main>
+    </div>
+    <footer class="foot"><span id="engine-info"></span></footer>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
