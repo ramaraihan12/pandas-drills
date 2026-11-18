@@ -63,7 +63,8 @@ sys.path.insert(0, "/home/pyodide")
 import drills, pandas, numpy
 f"Python {sys.version.split()[0]}, pandas {pandas.__version__}"
 `) as string;
-  drills = py.pyimport("drills");
+  // keep our own handle on run(), so later student code cannot swap it out
+  drills = { run: py.pyimport("drills").run };
   // scripts loaded with import() do not go through fetch, so read them from the resource timing list too
   let transferred = 0;
   for (const e of performance.getEntriesByType("resource") as PerformanceResourceTiming[]) {

@@ -64,6 +64,23 @@ describe("formatFeedback", () => {
     expect(f.lines[0]).toBe("ZeroDivisionError: division by zero");
   });
 
+  it("does not call a dictionary key a column", () => {
+    const f = formatFeedback(
+      { ...base, kind: "exception", error: { type: "KeyError", line: 5, text: "returned", code_line: "codes[s]", dict_key: "returned" } },
+      "check",
+    );
+    expect(f.lines[0]).toBe("'returned' is not a key in your dictionary (or mapping).");
+    expect(f.lines.join(" ")).not.toContain("no column");
+  });
+
+  it("adds warnings and hints to a wrong answer but not to a pass", () => {
+    const notes = ["Hint: you use `inplace=True`."];
+    const wrong = formatFeedback({ ...base, kind: "wrong_values", message: "different", notes }, "check");
+    expect(wrong.lines).toContain(notes[0]);
+    const ok = formatFeedback({ ...base, passed: true, kind: "passed", notes }, "check");
+    expect(ok.lines).not.toContain(notes[0]);
+  });
+
   it("asks for `result` when it is missing", () => {
     expect(formatFeedback({ ...base, kind: "no_result" }, "check").tone).toBe("fail");
     expect(formatFeedback({ ...base, kind: "no_result" }, "run").tone).toBe("info");

@@ -4,7 +4,7 @@ I teach at a vocational school, and every time I want my students to practise pa
 
 **Live demo:** https://ramaraihan.is-a.dev/pandas-drills/ (no login; the first visit downloads about 14 MB, see the numbers below)
 
-> The checks run in your browser, so this is practice, not an exam. Anyone who opens the developer tools can see the answers.
+> The checks run in your browser, so this is practice, not an exam. Anyone who opens the developer tools can see the answers, and the grading code is not protected from the student's own code.
 
 ## What it does
 

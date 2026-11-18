@@ -30,6 +30,8 @@ export interface ErrorInfo {
   missing?: string[];
   suggestions?: Record<string, string>;
   tuple_hint?: boolean;
+  /** A KeyError raised by the student's own dict or list, not by pandas. */
+  dict_key?: string;
 }
 
 /** What drills.run() returns (parsed from its JSON). */
@@ -40,6 +42,8 @@ export interface GradeResult {
   stdout: string;
   preview: string | null;
   error: ErrorInfo | null;
+  /** Plain-words warnings and hints (for example about inplace=True). Shown with a wrong answer. */
+  notes?: string[];
 }
 
 export type RunMode = "run" | "check";

@@ -92,3 +92,53 @@ def test_index_hint_for_groupby():
 def test_namespace_is_fresh_each_run():
     go('orders.drop(columns=["product"], inplace=True)\nresult = orders\n')
     assert go('result = orders[["order_id", "product"]]\n')["passed"]
+
+
+def test_chained_inplace_is_explained():
+    code = 'orders["quantity"].replace(2, 0, inplace=True)\nresult = orders[["order_id", "product"]].head(2)\n'
+    res = go(code)
+    assert res["kind"] == "wrong_shape"
+    assert res["notes"] and "Assign the result back" in res["notes"][0]
+
+
+def test_inplace_hint_even_without_a_warning():
+    res = go('orders.rename(columns={"product": "p"}, inplace=True)\nresult = orders\n')
+    assert any("inplace=True" in n for n in res["notes"])
+
+
+def test_no_notes_when_it_passes():
+    assert go('result = orders[["order_id", "product"]]\n')["notes"] == []
+
+
+def test_dict_key_error_is_not_called_a_column():
+    res = go('codes = {"Pen": 1}\nresult = orders["product"].apply(lambda p: codes[p])\n')
+    err = res["error"]
+    assert err["dict_key"] == "Mug" and "missing" not in err
+
+
+def test_key_close_to_a_column_keeps_the_column_hint():
+    res = go('d = {}\nresult = d["produkt"]\n')
+    assert res["error"]["suggestions"] == {"produkt": "product"}
+
+
+def test_float_difference_is_shown_in_full():
+    sol = "result = orders[['quantity']].astype(float)\n"
+    res = go("result = orders[['quantity']].astype(float) + 0.00001\n", sol=sol)
+    assert res["kind"] == "wrong_values"
+    assert "2.00001" in res["message"] and "expected 2.0." in res["message"]
+
+
+def test_scalar_close_but_not_equal_says_do_not_round():
+    res = json.loads(drills.run("result = 3.00001\n", CSV, "result = 3.0\n", CHK, "check"))
+    assert res["kind"] == "wrong_values" and "do not round" in res["message"]
+
+
+def test_one_level_multiindex_series_is_accepted():
+    sol = 'result = orders["product"].value_counts()\n'
+    assert go('result = orders[["product"]].value_counts()\n', sol=sol)["passed"]
+
+
+def test_student_cannot_replace_the_compare_helper():
+    code = "import drills\ndrills.compare = lambda *a, **k: None\nresult = 1\n"
+    assert not go(code)["passed"]
+    assert not go("result = 2\n")["passed"]

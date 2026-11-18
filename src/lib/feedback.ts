@@ -45,6 +45,16 @@ function describeError(err: ErrorInfo): { title: string; lines: string[]; code?:
       code,
     };
   }
+  if (err.type === "KeyError" && err.dict_key !== undefined) {
+    return {
+      title: `KeyError${where}: key not found`,
+      lines: [
+        `'${err.dict_key}' is not a key in your dictionary (or mapping).`,
+        "Add that key to the dictionary, or check the spelling of the keys you wrote.",
+      ],
+      code,
+    };
+  }
   if (err.type === "KeyError" && err.tuple_hint) {
     return {
       title: `KeyError${where}: several names without a list`,
@@ -70,6 +80,13 @@ function describeError(err: ErrorInfo): { title: string; lines: string[]; code?:
 }
 
 export function formatFeedback(res: GradeResult, mode: "run" | "check"): Feedback {
+  const fb = formatMain(res, mode);
+  // warnings and hints help most when something is wrong
+  if (res.notes?.length && fb.tone !== "pass") fb.lines = [...fb.lines, ...res.notes];
+  return fb;
+}
+
+function formatMain(res: GradeResult, mode: "run" | "check"): Feedback {
   const base = { stdout: res.stdout ?? "", preview: res.preview ?? null };
 
   if (res.kind === "passed") {

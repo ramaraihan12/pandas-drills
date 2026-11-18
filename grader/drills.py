@@ -14,6 +14,7 @@ import difflib
 import io
 import json
 import re
+import sys
 import traceback
 import warnings
 from collections import namedtuple
@@ -49,6 +50,15 @@ def _fmt(value):
     if isinstance(value, np.generic):
         return repr(value.item())
     return repr(value)
+
+
+def _fmt_pair(a, b):
+    """Text for two cells. When two floats only differ after the 4th decimal, show them in full."""
+    fa, fb = _fmt(a), _fmt(b)
+    if fa == fb and isinstance(a, (float, np.floating)) and isinstance(b, (float, np.floating)) \
+            and not (pd.isna(a) and pd.isna(b)) and float(a) != float(b):
+        return repr(float(a)), repr(float(b))
+    return fa, fb
 
 
 def _names(items, limit=12):
@@ -172,7 +182,11 @@ def compare_scalar(result, expected, rtol=1e-6):
     except (TypeError, ValueError):
         same = False
     if not same:
-        return Problem("wrong_values", f"The value is not right: you have {_fmt(result)} but I expected something different. "
+        shown, close = _fmt(result), ""
+        if isinstance(result, (float, np.floating)) and isinstance(expected, (float, np.floating)) \
+                and _fmt_pair(result, expected)[0] != shown:
+            shown, close = repr(float(result)), " It is very close, so do not round it."
+        return Problem("wrong_values", f"The value is not right: you have {shown} but I expected something different.{close} "
                                        "Re-read the task and check which rows or columns are used.")
     return None
 
@@ -310,11 +324,12 @@ def compare_frame(result, expected, sort_by=None, check_index=False, ignore_orde
                 pass
         pos = int(np.flatnonzero(bad_rows)[0])
         col = first_col[pos]
+        have, want = _fmt_pair(a[col].iloc[pos], b[col].iloc[pos])
         label = f" (index label {labels_a[pos]})" if labels_a is not None else ""
         return Problem("wrong_values",
                        f"The shape and column names are right, but {int(bad_rows.sum())} of {len(a)} rows have different values. "
-                       f"First difference: row {pos}{label}, column '{col}': you have {_fmt(a[col].iloc[pos])}, "
-                       f"I expected {_fmt(b[col].iloc[pos])}.\n"
+                       f"First difference: row {pos}{label}, column '{col}': you have {have}, "
+                       f"I expected {want}.\n"
                        f"Your row:     {_row_text(a, pos)}\nExpected row: {_row_text(b, pos)}")
 
     if check_dtype:
@@ -330,6 +345,10 @@ def compare_series(result, expected, check_index=True, ignore_order=False, check
     if not isinstance(result, pd.Series):
         return _type_problem(result, "a Series (a single column of values)")
     a, b = result, expected
+    if isinstance(a.index, pd.MultiIndex) and a.index.nlevels == 1:
+        # loans[['genre']].value_counts() has one-level labels like ('fiction',)
+        a = a.copy()
+        a.index = a.index.get_level_values(0)
     if len(a) != len(b):
         return Problem("wrong_shape", f"Your Series has {len(a)} values but I expected {len(b)}.")
     if check_index:
@@ -354,9 +373,10 @@ def compare_series(result, expected, check_index=True, ignore_order=False, check
     pos = _first_bad(eq)
     if pos is not None:
         label = a.index[pos]
+        have, want = _fmt_pair(a.iloc[pos], b.iloc[pos])
         return Problem("wrong_values",
                        f"{int((~eq).sum())} of {len(a)} values differ. First difference: label {_fmt(label)} (position {pos}): "
-                       f"you have {_fmt(a.iloc[pos])}, I expected {_fmt(b.iloc[pos])}.")
+                       f"you have {have}, I expected {want}.")
     if check_dtype and fa != fb:
         return Problem("wrong_dtype", f"The values are right, but their type is {_dtype_label(a)} and I expected {_dtype_label(b)}.")
     return None
@@ -417,9 +437,12 @@ def _closest(key, candidates):
 def _error_info(exc, code, ns, data_names):
     lines = code.splitlines()
     line_no, line_text = None, ""
-    for fr in traceback.extract_tb(exc.__traceback__):
+    frames = traceback.extract_tb(exc.__traceback__)
+    for fr in frames:
         if fr.filename == STUDENT_FILE:
             line_no = fr.lineno
+    # the error was raised by the student's own line (a dict, a list), not inside pandas
+    own_raise = bool(frames) and frames[-1].filename == STUDENT_FILE
     if line_no and 0 < line_no <= len(lines):
         line_text = lines[line_no - 1].strip()
     info = {"type": type(exc).__name__, "line": line_no, "code_line": line_text,
@@ -431,6 +454,9 @@ def _error_info(exc, code, ns, data_names):
         info["columns"] = cols
         if was_tuple and keys and all(k in all_cols for k in keys):
             info["tuple_hint"] = True
+        elif own_raise and len(keys) == 1 and not _closest(keys[0], all_cols):
+            info.pop("columns", None)
+            info["dict_key"] = keys[0]
         else:
             info["missing"] = keys
             info["suggestions"] = {k: s for k in keys if (s := _closest(k, all_cols))}
@@ -455,14 +481,43 @@ def _preview(obj):
     return f"{type(obj).__name__}: {text[:500]}"
 
 
+_CHAINED = ("how pandas 3 works: `df['a'].fillna(..., inplace=True)` and similar chained changes work on a "
+            "temporary copy, so nothing changes. Assign the result back instead, for example "
+            "`df['a'] = df['a'].fillna(0)`.")
+
+
+def _warning_notes(caught):
+    """Plain-words notes for the warnings pandas raised while the student's code ran."""
+    notes = []
+    for w in caught:
+        name = w.category.__name__
+        text = " ".join(str(w.message).split())
+        if "ChainedAssignment" in name or "SettingWithCopy" in name:
+            note = "Warning: pandas did not change your table here. This is " + _CHAINED
+        elif issubclass(w.category, (FutureWarning, DeprecationWarning)) or w.category.__module__.startswith("pandas"):
+            note = f"Warning from pandas ({name}): {text[:240]}"
+        else:
+            continue
+        if note not in notes:
+            notes.append(note)
+    return notes[:3]
+
+
+def _inplace_hint(code):
+    if re.search(r"inplace\s*=\s*True", code):
+        return ("Hint: you use `inplace=True`. In pandas 3 that does nothing when it is used on a single column "
+                "(`df['a'].fillna(0, inplace=True)`). Assign the result back: `df['a'] = df['a'].fillna(0)`.")
+    return None
+
+
 def _execute(code, data):
-    """Run code in a fresh namespace. Returns (namespace, stdout, error_or_None, compiled_ok)."""
+    """Run code in a fresh namespace. Returns (namespace, stdout, error_or_None, warnings)."""
     ns = _fresh_namespace(data)
     buf = io.StringIO()
     compiled = compile(code, STUDENT_FILE, "exec")
     err = None
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
         try:
             with redirect_stdout(buf), redirect_stderr(io.StringIO()):
                 exec(compiled, ns)
@@ -471,12 +526,12 @@ def _execute(code, data):
     out = buf.getvalue()
     if len(out) > MAX_STDOUT:
         out = out[:MAX_STDOUT] + "\n... (output cut)"
-    return ns, out, err
+    return ns, out, err, list(caught)
 
 
 def run(code, data, solution="", check_src="", mode="check"):
     """Run the student's code and (in check mode) grade it. Returns a JSON string."""
-    out = {"passed": False, "kind": "ok", "message": "", "stdout": "", "preview": None, "error": None}
+    out = {"passed": False, "kind": "ok", "message": "", "stdout": "", "preview": None, "error": None, "notes": []}
     data_names = [n.rsplit("/", 1)[-1].rsplit(".", 1)[0] for n in data]
 
     try:
@@ -487,13 +542,15 @@ def run(code, data, solution="", check_src="", mode="check"):
                         "code_line": (exc.text or "").strip(), "offset": exc.offset}
         return json.dumps(out, default=str)
 
-    ns, stdout, err = _execute(code, data)
+    ns, stdout, err, caught = _execute(code, data)
     out["stdout"] = stdout
+    notes = _warning_notes(caught)
     if err is not None:
         out["kind"] = "exception"
         out["error"] = _error_info(err, code, ns, data_names)
         return json.dumps(out, default=str)
 
+    out["notes"] = notes
     if "result" not in ns:
         out["kind"] = "no_result"
         return json.dumps(out, default=str)
@@ -505,7 +562,8 @@ def run(code, data, solution="", check_src="", mode="check"):
 
     # reference answer, computed on the same data
     try:
-        ref_ns, _, ref_err = _execute(solution, data)
+        _restore_grader()
+        ref_ns, _, ref_err, _ = _execute(solution, data)
         if ref_err is not None or "result" not in ref_ns:
             raise RuntimeError("reference solution failed")
         expected = ref_ns["result"]
@@ -524,4 +582,25 @@ def run(code, data, solution="", check_src="", mode="check"):
     else:
         out["kind"] = problem.kind
         out["message"] = problem.message
+        hint = _inplace_hint(code)
+        if hint and not notes:
+            notes.append(hint)
+    out["notes"] = notes
     return json.dumps(out, default=str)
+
+
+# ---------------------------------------------------------------------------
+# Student code shares this process, so it could replace helpers (drills.compare = ...).
+# Before the reference and the check run, put the original functions back.
+# This is not tamper-proof (see the README): it only stops a slip from spoiling later runs.
+# ---------------------------------------------------------------------------
+
+_SELF = sys.modules[__name__]
+_PRISTINE = {k: v for k, v in list(globals().items())
+             if k not in ("_SELF", "_PRISTINE") and callable(v) and getattr(v, "__module__", None) == __name__}
+
+
+def _restore_grader():
+    sys.modules[__name__] = _SELF
+    for key, value in _PRISTINE.items():
+        setattr(_SELF, key, value)
