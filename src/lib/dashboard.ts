@@ -30,7 +30,7 @@ export function cellText(cell: ReportCell | undefined): string {
   return `${STATE_INFO[state].symbol} ${state === "several" ? triesToPass(cell) : cell.attempts}`;
 }
 
-const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
+const plural = (n: number, word: string) => `${n} ${n === 1 ? word : word === "try" ? "tries" : `${word}s`}`;
 
 /** A full sentence for screen readers and tooltips. */
 export function cellLabel(nickname: string, exerciseId: string, cell: ReportCell | undefined): string {
