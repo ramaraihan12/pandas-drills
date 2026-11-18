@@ -1,6 +1,7 @@
 // Local end-to-end test for the class features (not run in CI).
 // Needs: a Playwright browser (npx playwright install chromium), `npm run build` done with
-// VITE_API_URL=http://localhost:8787, and the API running: in api/, `npm run migrate:local`
+// VITE_API_URL=http://localhost:8787 and VITE_TURNSTILE_SITEKEY=1x00000000000000000000AA (Cloudflare's
+// test key, always passes), and the API running: in api/, `npm run migrate:local`
 // then `npm run dev`. Usage: node e2e/classes.mjs
 import { spawn } from "node:child_process";
 import { mkdirSync } from "node:fs";
@@ -42,6 +43,9 @@ try {
   const teacher = await teacherCtx.newPage();
   await teacher.goto(WEB + "#/new-class");
   await teacher.fill("#class-name", "E2E class");
+  ok(await teacher.locator("button[type=submit]").isDisabled(), "Create is disabled until the bot check gives a token");
+  await teacher.waitForSelector("button[type=submit]:not([disabled])", { timeout: 60_000 });
+  ok((await teacher.locator('script[src^="https://challenges.cloudflare.com/turnstile/"]').count()) === 1, "the Turnstile script is loaded on the new-class page");
   await teacher.click("button[type=submit]");
   const studentLink = await teacher.locator('input[aria-label="Student link"]').inputValue();
   const teacherLink = await teacher.locator('input[aria-label="Teacher link (private)"]').inputValue();
@@ -60,9 +64,12 @@ try {
 
   // two students, two browser contexts
   const results = {};
+  const previews = {};
+  const good = 'result = orders[["order_id", "product", "quantity"]]';
   for (const [nick, code, expectPass] of [
-    ["Ann", 'result = orders[["order_id", "product", "quantity"]]', true],
+    ["Ann", good, true],
     ["Bo", 'result = orders[["order_id", "produkt", "quantity"]]', false],
+    ["Cai", good, true], // the same correct code as Ann: it must pass on a different copy of the data
   ]) {
     const ctx = await browser.newContext();
     const page = await ctx.newPage();
@@ -72,11 +79,23 @@ try {
     await page.click("button[type=submit]");
     await page.waitForSelector("#class-badge:not([hidden])");
     ok((await page.textContent("#class-badge")).includes(nick), `${nick}: header shows class and nickname`);
+    await page.waitForSelector("#data-preview table tbody tr", { timeout: 180_000 });
+    ok(await page.locator("#variant-note").isVisible(), `${nick}: the variant note is shown`);
+    ok((await page.textContent("#variant-note")).includes("Your data is a variant made for you, so your numbers differ from your classmates'."), `${nick}: the variant note says so`);
+    previews[nick] = await page.locator("#data-preview table tbody").first().innerText();
     const cls = await check(page, code);
     ok(cls.includes(expectPass ? "pass" : "fail") || (!expectPass && cls.includes("error")), `${nick}: check ${expectPass ? "passed" : "failed"}`);
     await page.waitForTimeout(800); // let the background submission go out
     results[nick] = ctx;
   }
+
+  ok(previews.Ann !== previews.Cai && previews.Ann !== previews.Bo && previews.Bo !== previews.Cai, "three students see three different data previews");
+  const solo = await (await browser.newContext()).newPage();
+  await solo.goto(WEB);
+  await solo.waitForSelector("#data-preview table tbody tr");
+  ok(await solo.locator("#variant-note").isHidden(), "solo mode: no variant note");
+  ok((await solo.locator("#data-preview table tbody tr").first().innerText()).startsWith("1001"), "solo mode: the original data");
+  await solo.close();
 
   // teacher opens the results
   await teacher.goto(teacherLink);
@@ -95,7 +114,7 @@ try {
   await other.close();
   ok((await teacher.textContent("#dash-caveat")).includes("practice data, not exam marks"), "dashboard says it is practice data");
   const rows = await teacher.locator("table.heatmap tbody tr").allTextContents();
-  ok(rows.length === 2, "teacher sees two students");
+  ok(rows.length === 3, "teacher sees three students");
   ok(rows.some((r) => r.startsWith("Ann") && r.includes("\u2713")), "Ann passed in 1 attempt");
   ok(rows.some((r) => r.startsWith("Bo") && r.includes("\u2717 1")), "Bo has 1 failed attempt");
   await teacher.locator("button.cell.first").first().click();
@@ -103,7 +122,7 @@ try {
   ok((await teacher.textContent("pre.attempt")).includes("order_id"), "clicking a cell shows the code");
   for (const id of ["dash-heatmap", "dash-exercises", "dash-stuck", "dash-same", "dash-export"]) ok(await teacher.locator(`#${id}`).isVisible(), `dashboard section ${id}`);
   const row1 = (await teacher.locator("table.by-exercise tbody tr").first().textContent()) ?? "";
-  ok(row1.includes("1 / 2") && row1.includes("50%"), "exercise 1: 1 of 2 passed, 50%");
+  ok(row1.includes("2 / 3") && row1.includes("67%"), "exercise 1: 2 of 3 passed, 67% (Ann and Cai, on different data)");
   ok(row1.includes("wrong columns") || row1.includes("error while running"), "exercise 1 lists the failure kind in words");
   ok((await teacher.locator("button.cell.open").count()) === 1, "Bo's cell is tried and not passed");
   ok((await teacher.locator("table.heatmap tbody tr").first().locator("button.cell.none").count()) > 0, "untried exercises show as not tried");
@@ -144,7 +163,7 @@ try {
   // remove a student
   teacher.on("dialog", (d) => d.accept());
   await teacher.click('button[aria-label="Remove Bo and their results"]');
-  await teacher.waitForFunction(() => document.querySelectorAll("table.heatmap tbody tr").length === 1, null, { timeout: 15_000 });
+  await teacher.waitForFunction(() => document.querySelectorAll("table.heatmap tbody tr").length === 2, null, { timeout: 15_000 });
   ok((await teacher.locator("table.heatmap tbody tr").first().textContent()).startsWith("Ann"), "Bo was removed, Ann is still there");
 
   // delete the class
