@@ -12,9 +12,7 @@ enabled = false
 [[d1_databases]]
 binding = "DB"
 database_name = "pandas-drills"
-# Local dev and the tests do not need a real id. Replace it with the id printed by
-# `wrangler d1 create pandas-drills` before deploying (see README.md).
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "6c9fd931-5574-4a4f-b516-6495e5280462"
 migrations_dir = "migrations"
 
 # One daily cleanup of expired classes (03:17 UTC). The same cleanup also runs, in small
