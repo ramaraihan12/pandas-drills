@@ -1,0 +1,2427 @@
+{
+ "name": "Demo class: pandas workshop",
+ "expiresAt": "2027-05-01T00:00:00.000Z",
+ "exercises": [
+  "01-select-columns",
+  "02-filter-rows",
+  "03-sort-values",
+  "04-new-column",
+  "05-value-counts",
+  "06-missing-values",
+  "07-groupby-agg",
+  "08-multiple-aggregations",
+  "09-merge",
+  "10-pivot-table",
+  "11-dates",
+  "12-string-methods",
+  "13-apply-and-map",
+  "14-top-n-per-group",
+  "15-clean-up-inventory"
+ ],
+ "students": [
+  {
+   "id": "demo-01",
+   "nickname": "Student 01",
+   "joinedAt": "2026-11-10T09:07:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:16:00.000Z",
+     "lastAt": "2026-11-10T09:16:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "2e19cedddb39bae8"
+    },
+    "02-filter-rows": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:18:00.000Z",
+     "lastAt": "2026-11-10T09:18:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "4ec797304fb5795d"
+    },
+    "03-sort-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:22:00.000Z",
+     "lastAt": "2026-11-10T09:22:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "417e6a41337a4520"
+    },
+    "04-new-column": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:27:00.000Z",
+     "lastAt": "2026-11-10T09:27:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "7db3426c0148c1a2"
+    },
+    "05-value-counts": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:45:00.000Z",
+     "lastAt": "2026-11-10T09:45:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "44bac884fd94445d"
+    },
+    "06-missing-values": {
+     "attempts": 6,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:08:00.000Z",
+     "lastAt": "2026-11-10T10:08:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 6,
+     "firstPassHash": "9b9f689752bc27a9"
+    },
+    "07-groupby-agg": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:10:00.000Z",
+     "lastAt": "2026-11-10T10:10:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "88839a716d143bb5"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:23:00.000Z",
+     "lastAt": "2026-11-10T10:23:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "73a9ccccfdd988e3"
+    },
+    "09-merge": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:29:00.000Z",
+     "lastAt": "2026-11-10T10:29:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "32af2e3e8583d1db"
+    }
+   }
+  },
+  {
+   "id": "demo-02",
+   "nickname": "Student 02",
+   "joinedAt": "2026-11-10T09:27:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:31:00.000Z",
+     "lastAt": "2026-11-10T09:31:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "0abc7562bed2df2d"
+    },
+    "02-filter-rows": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:38:00.000Z",
+     "lastAt": "2026-11-10T09:38:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "1872dd92315c6379"
+    },
+    "03-sort-values": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:53:00.000Z",
+     "lastAt": "2026-11-10T09:53:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "6e6e6a7ebd25f956"
+    },
+    "04-new-column": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:02:00.000Z",
+     "lastAt": "2026-11-10T10:02:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "2457af36d2db0296"
+    },
+    "05-value-counts": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:06:00.000Z",
+     "lastAt": "2026-11-10T10:06:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "f249b187f52017f0"
+    },
+    "06-missing-values": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:21:00.000Z",
+     "lastAt": "2026-11-10T10:21:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "d812e65c537fecb6"
+    },
+    "07-groupby-agg": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:29:00.000Z",
+     "lastAt": "2026-11-10T10:29:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "ed48229bafacc37a"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:41:00.000Z",
+     "lastAt": "2026-11-10T10:41:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "fe7421866e0b769b"
+    },
+    "09-merge": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:46:00.000Z",
+     "lastAt": "2026-11-10T10:46:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "8f80f0b3a899c86d"
+    },
+    "10-pivot-table": {
+     "attempts": 2,
+     "passed": false,
+     "firstPassAt": null,
+     "lastAt": "2026-11-10T10:56:00.000Z",
+     "lastKind": "wrong_index",
+     "triesToPass": null,
+     "firstPassHash": null
+    },
+    "11-dates": {
+     "attempts": 2,
+     "passed": false,
+     "firstPassAt": null,
+     "lastAt": "2026-11-10T11:19:00.000Z",
+     "lastKind": "wrong_dtype",
+     "triesToPass": null,
+     "firstPassHash": null
+    },
+    "12-string-methods": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:44:00.000Z",
+     "lastAt": "2026-11-10T11:44:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "053258ed46bf4621"
+    },
+    "13-apply-and-map": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:54:00.000Z",
+     "lastAt": "2026-11-10T11:54:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "d7e2c85bc0bbd5fc"
+    },
+    "14-top-n-per-group": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T12:10:00.000Z",
+     "lastAt": "2026-11-10T12:10:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "a6ed9452f0df74e7"
+    },
+    "15-clean-up-inventory": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T12:31:00.000Z",
+     "lastAt": "2026-11-10T12:31:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "5748ae9e88c51a23"
+    }
+   }
+  },
+  {
+   "id": "demo-03",
+   "nickname": "Student 03",
+   "joinedAt": "2026-11-10T09:18:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:27:00.000Z",
+     "lastAt": "2026-11-10T09:27:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "becd6a6fbc7a0e0f"
+    },
+    "02-filter-rows": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:29:00.000Z",
+     "lastAt": "2026-11-10T09:29:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "b0f8d0a9b8825f2f"
+    },
+    "03-sort-values": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:37:00.000Z",
+     "lastAt": "2026-11-10T09:37:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "a493f2fab2a3898e"
+    },
+    "04-new-column": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:48:00.000Z",
+     "lastAt": "2026-11-10T09:48:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "74d3efbca94a3e0a"
+    },
+    "05-value-counts": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:53:00.000Z",
+     "lastAt": "2026-11-10T09:53:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "594412e052180afb"
+    },
+    "06-missing-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:59:00.000Z",
+     "lastAt": "2026-11-10T09:59:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "e7f4777b58c84802"
+    },
+    "07-groupby-agg": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:01:00.000Z",
+     "lastAt": "2026-11-10T10:01:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "b35fecb3eaba2870"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:08:00.000Z",
+     "lastAt": "2026-11-10T10:08:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "2b3f0c6b72cd3a5f"
+    },
+    "09-merge": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:11:00.000Z",
+     "lastAt": "2026-11-10T10:11:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "3a6aa7f53f342c3f"
+    },
+    "10-pivot-table": {
+     "attempts": 3,
+     "passed": false,
+     "firstPassAt": null,
+     "lastAt": "2026-11-10T10:24:00.000Z",
+     "lastKind": "exception",
+     "triesToPass": null,
+     "firstPassHash": null
+    },
+    "11-dates": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:42:00.000Z",
+     "lastAt": "2026-11-10T10:42:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "683a8778c9c043fe"
+    },
+    "12-string-methods": {
+     "attempts": 5,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:54:00.000Z",
+     "lastAt": "2026-11-10T10:54:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 5,
+     "firstPassHash": "555101e097f5d56d"
+    },
+    "13-apply-and-map": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:58:00.000Z",
+     "lastAt": "2026-11-10T10:58:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "6949886de3089476"
+    },
+    "14-top-n-per-group": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:09:00.000Z",
+     "lastAt": "2026-11-10T11:09:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "3021dd68d72c6fc9"
+    },
+    "15-clean-up-inventory": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:13:00.000Z",
+     "lastAt": "2026-11-10T11:13:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "40e8d9798f93b0d6"
+    }
+   }
+  },
+  {
+   "id": "demo-04",
+   "nickname": "Student 04",
+   "joinedAt": "2026-11-10T09:11:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:20:00.000Z",
+     "lastAt": "2026-11-10T09:20:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "80e65ed22335ddf4"
+    },
+    "02-filter-rows": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:23:00.000Z",
+     "lastAt": "2026-11-10T09:23:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "6bbfd0925fc321b4"
+    },
+    "03-sort-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:25:00.000Z",
+     "lastAt": "2026-11-10T09:25:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "3999378cdc96e772"
+    },
+    "04-new-column": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:29:00.000Z",
+     "lastAt": "2026-11-10T09:29:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "3503e8b9853afb61"
+    },
+    "05-value-counts": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:36:00.000Z",
+     "lastAt": "2026-11-10T09:36:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "17bfe807e63728e6"
+    },
+    "06-missing-values": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:38:00.000Z",
+     "lastAt": "2026-11-10T09:40:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "aa886e132035a45c"
+    },
+    "07-groupby-agg": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:45:00.000Z",
+     "lastAt": "2026-11-10T09:45:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "d94c7194955ec1ca"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:57:00.000Z",
+     "lastAt": "2026-11-10T09:57:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "4bc3022f9f2ac65a"
+    },
+    "09-merge": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:05:00.000Z",
+     "lastAt": "2026-11-10T10:05:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "cd932c6543e97184"
+    },
+    "10-pivot-table": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:08:00.000Z",
+     "lastAt": "2026-11-10T10:08:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "969d075eba6f3657"
+    },
+    "11-dates": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:15:00.000Z",
+     "lastAt": "2026-11-10T10:15:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "07e7477ca70b0eba"
+    },
+    "12-string-methods": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:18:00.000Z",
+     "lastAt": "2026-11-10T10:18:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "601fe61a68991eca"
+    },
+    "13-apply-and-map": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:21:00.000Z",
+     "lastAt": "2026-11-10T10:21:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "6f339c247218c278"
+    },
+    "14-top-n-per-group": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:32:00.000Z",
+     "lastAt": "2026-11-10T10:32:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "d99975103c89d675"
+    },
+    "15-clean-up-inventory": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:41:00.000Z",
+     "lastAt": "2026-11-10T10:41:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "31403042909c647c"
+    }
+   }
+  },
+  {
+   "id": "demo-05",
+   "nickname": "Student 05",
+   "joinedAt": "2026-11-10T09:32:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 2,
+     "passed": false,
+     "firstPassAt": null,
+     "lastAt": "2026-11-10T09:42:00.000Z",
+     "lastKind": "wrong_shape",
+     "triesToPass": null,
+     "firstPassHash": null
+    },
+    "02-filter-rows": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:03:00.000Z",
+     "lastAt": "2026-11-10T10:05:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "87755df7728f01f1"
+    },
+    "03-sort-values": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:12:00.000Z",
+     "lastAt": "2026-11-10T10:14:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "20a25ea3259d7f12"
+    },
+    "04-new-column": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:19:00.000Z",
+     "lastAt": "2026-11-10T10:19:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "f2dcf6739295a1a6"
+    },
+    "05-value-counts": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:22:00.000Z",
+     "lastAt": "2026-11-10T10:22:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "10a692fbdb8f03fa"
+    },
+    "06-missing-values": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:41:00.000Z",
+     "lastAt": "2026-11-10T10:41:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "87eb73b8b0705c00"
+    },
+    "07-groupby-agg": {
+     "attempts": 5,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:56:00.000Z",
+     "lastAt": "2026-11-10T10:56:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 5,
+     "firstPassHash": "be102dd759b9e931"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:04:00.000Z",
+     "lastAt": "2026-11-10T11:04:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "801b1b4d4c147ebc"
+    },
+    "09-merge": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:22:00.000Z",
+     "lastAt": "2026-11-10T11:22:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "4c2c9af8e8d6a389"
+    },
+    "10-pivot-table": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:27:00.000Z",
+     "lastAt": "2026-11-10T11:27:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "515604aa2a19f8df"
+    },
+    "11-dates": {
+     "attempts": 2,
+     "passed": false,
+     "firstPassAt": null,
+     "lastAt": "2026-11-10T11:40:00.000Z",
+     "lastKind": "syntax",
+     "triesToPass": null,
+     "firstPassHash": null
+    },
+    "12-string-methods": {
+     "attempts": 6,
+     "passed": true,
+     "firstPassAt": "2026-11-10T12:14:00.000Z",
+     "lastAt": "2026-11-10T12:14:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 6,
+     "firstPassHash": "d5696babc25b164c"
+    },
+    "13-apply-and-map": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T12:26:00.000Z",
+     "lastAt": "2026-11-10T12:26:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "1db52067df6d4cd9"
+    }
+   }
+  },
+  {
+   "id": "demo-06",
+   "nickname": "Student 06",
+   "joinedAt": "2026-11-10T09:32:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:36:00.000Z",
+     "lastAt": "2026-11-10T09:36:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "1cfff6cefabb8883"
+    },
+    "02-filter-rows": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:41:00.000Z",
+     "lastAt": "2026-11-10T09:41:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "01190d74d465d730"
+    },
+    "03-sort-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:45:00.000Z",
+     "lastAt": "2026-11-10T09:45:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "7b6b884b3f4b635a"
+    },
+    "04-new-column": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:48:00.000Z",
+     "lastAt": "2026-11-10T09:48:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "c96866bf07ad15bb"
+    },
+    "05-value-counts": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:54:00.000Z",
+     "lastAt": "2026-11-10T09:54:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "eeda7680587bdf69"
+    },
+    "06-missing-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:01:00.000Z",
+     "lastAt": "2026-11-10T10:01:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "d95f0ee0201ff95b"
+    },
+    "07-groupby-agg": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:05:00.000Z",
+     "lastAt": "2026-11-10T10:05:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "05e83165881b912c"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:11:00.000Z",
+     "lastAt": "2026-11-10T10:11:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "7e8d71a9eb5c06b8"
+    },
+    "09-merge": {
+     "attempts": 2,
+     "passed": false,
+     "firstPassAt": null,
+     "lastAt": "2026-11-10T10:17:00.000Z",
+     "lastKind": "wrong_columns",
+     "triesToPass": null,
+     "firstPassHash": null
+    },
+    "10-pivot-table": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:36:00.000Z",
+     "lastAt": "2026-11-10T10:36:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "32a18743fde661f2"
+    },
+    "11-dates": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:45:00.000Z",
+     "lastAt": "2026-11-10T10:45:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "7a560ca0ad375f17"
+    },
+    "12-string-methods": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:03:00.000Z",
+     "lastAt": "2026-11-10T11:03:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "d2573fcc7da041bb"
+    },
+    "13-apply-and-map": {
+     "attempts": 2,
+     "passed": false,
+     "firstPassAt": null,
+     "lastAt": "2026-11-10T11:16:00.000Z",
+     "lastKind": "wrong_columns",
+     "triesToPass": null,
+     "firstPassHash": null
+    },
+    "14-top-n-per-group": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:39:00.000Z",
+     "lastAt": "2026-11-10T11:39:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "c2ef5e715d9710ef"
+    },
+    "15-clean-up-inventory": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:52:00.000Z",
+     "lastAt": "2026-11-10T11:52:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "e3979180612d6e90"
+    }
+   }
+  },
+  {
+   "id": "demo-07",
+   "nickname": "Student 07",
+   "joinedAt": "2026-11-10T09:18:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:25:00.000Z",
+     "lastAt": "2026-11-10T09:27:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "2505414d024da7ad"
+    },
+    "02-filter-rows": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:33:00.000Z",
+     "lastAt": "2026-11-10T09:33:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "108c6a04f89b2831"
+    },
+    "03-sort-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:35:00.000Z",
+     "lastAt": "2026-11-10T09:35:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "efeddad4e2711600"
+    },
+    "04-new-column": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:37:00.000Z",
+     "lastAt": "2026-11-10T09:37:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "de98cb32815ac988"
+    },
+    "05-value-counts": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:40:00.000Z",
+     "lastAt": "2026-11-10T09:40:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "6108408b91342d1d"
+    },
+    "06-missing-values": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:44:00.000Z",
+     "lastAt": "2026-11-10T09:44:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "19cf73b3742b53aa"
+    },
+    "07-groupby-agg": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:46:00.000Z",
+     "lastAt": "2026-11-10T09:48:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "d7d3046c3b180c77"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:51:00.000Z",
+     "lastAt": "2026-11-10T09:51:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "8056116516163018"
+    },
+    "09-merge": {
+     "attempts": 5,
+     "passed": false,
+     "firstPassAt": null,
+     "lastAt": "2026-11-10T10:06:00.000Z",
+     "lastKind": "exception",
+     "triesToPass": null,
+     "firstPassHash": null
+    },
+    "10-pivot-table": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:25:00.000Z",
+     "lastAt": "2026-11-10T10:25:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "b4ee06b40e8dcc69"
+    },
+    "11-dates": {
+     "attempts": 2,
+     "passed": false,
+     "firstPassAt": null,
+     "lastAt": "2026-11-10T10:30:00.000Z",
+     "lastKind": "wrong_dtype",
+     "triesToPass": null,
+     "firstPassHash": null
+    },
+    "12-string-methods": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:49:00.000Z",
+     "lastAt": "2026-11-10T10:49:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "91b5d1078c392d5f"
+    }
+   }
+  },
+  {
+   "id": "demo-08",
+   "nickname": "Student 08",
+   "joinedAt": "2026-11-10T09:21:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:29:00.000Z",
+     "lastAt": "2026-11-10T09:29:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "b1a9f662d1e0b02f"
+    },
+    "02-filter-rows": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:39:00.000Z",
+     "lastAt": "2026-11-10T09:39:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "14a3d4af8b2fb78c"
+    },
+    "03-sort-values": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:55:00.000Z",
+     "lastAt": "2026-11-10T09:55:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "ac4b38b31500689f"
+    },
+    "04-new-column": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:01:00.000Z",
+     "lastAt": "2026-11-10T10:01:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "ddfbc236b30080bd"
+    },
+    "05-value-counts": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:13:00.000Z",
+     "lastAt": "2026-11-10T10:13:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "8973207f9338fa43"
+    },
+    "06-missing-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:17:00.000Z",
+     "lastAt": "2026-11-10T10:17:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "0963204a358615d2"
+    },
+    "07-groupby-agg": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:25:00.000Z",
+     "lastAt": "2026-11-10T10:25:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "24a094d112a2e788"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:40:00.000Z",
+     "lastAt": "2026-11-10T10:40:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "9d357839f8801419"
+    },
+    "09-merge": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:57:00.000Z",
+     "lastAt": "2026-11-10T10:57:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "d36b17d42e301128"
+    },
+    "10-pivot-table": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:17:00.000Z",
+     "lastAt": "2026-11-10T11:17:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "54e2c9f4fe2f5b6f"
+    },
+    "11-dates": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:37:00.000Z",
+     "lastAt": "2026-11-10T11:37:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "1147aa1d2ca89ba8"
+    },
+    "12-string-methods": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:48:00.000Z",
+     "lastAt": "2026-11-10T11:48:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "9201d8e57f0b41d4"
+    },
+    "13-apply-and-map": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:59:00.000Z",
+     "lastAt": "2026-11-10T11:59:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "10f553d14c7d56eb"
+    },
+    "14-top-n-per-group": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T12:06:00.000Z",
+     "lastAt": "2026-11-10T12:06:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "f62355a9f596ae62"
+    },
+    "15-clean-up-inventory": {
+     "attempts": 6,
+     "passed": true,
+     "firstPassAt": "2026-11-10T12:38:00.000Z",
+     "lastAt": "2026-11-10T12:38:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 6,
+     "firstPassHash": "faa84b519d52640b"
+    }
+   }
+  },
+  {
+   "id": "demo-09",
+   "nickname": "Student 09",
+   "joinedAt": "2026-11-10T09:31:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:39:00.000Z",
+     "lastAt": "2026-11-10T09:39:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "8b4ee7f77daee927"
+    },
+    "02-filter-rows": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:52:00.000Z",
+     "lastAt": "2026-11-10T09:54:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "96ee4c3c2bedaed6"
+    },
+    "03-sort-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:01:00.000Z",
+     "lastAt": "2026-11-10T10:01:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "1e29756ba918ed78"
+    },
+    "04-new-column": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:08:00.000Z",
+     "lastAt": "2026-11-10T10:08:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "5c7e9846a9d10d17"
+    },
+    "05-value-counts": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:10:00.000Z",
+     "lastAt": "2026-11-10T10:12:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "d7755eafce773bf2"
+    },
+    "06-missing-values": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:20:00.000Z",
+     "lastAt": "2026-11-10T10:20:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "227b45098b0d5ad4"
+    },
+    "07-groupby-agg": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:37:00.000Z",
+     "lastAt": "2026-11-10T10:37:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "94236c60830e1eb8"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:49:00.000Z",
+     "lastAt": "2026-11-10T10:49:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "516b84f28d83bfcf"
+    },
+    "09-merge": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:58:00.000Z",
+     "lastAt": "2026-11-10T10:58:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "1241e4deb5ef487d"
+    },
+    "10-pivot-table": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:06:00.000Z",
+     "lastAt": "2026-11-10T11:06:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "a5447fa6abf50a9b"
+    }
+   }
+  },
+  {
+   "id": "demo-10",
+   "nickname": "Student 10",
+   "joinedAt": "2026-11-10T09:09:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:13:00.000Z",
+     "lastAt": "2026-11-10T09:13:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "6bf04941e57ff0cb"
+    },
+    "02-filter-rows": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:15:00.000Z",
+     "lastAt": "2026-11-10T09:15:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "b892778980188ff5"
+    },
+    "03-sort-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:22:00.000Z",
+     "lastAt": "2026-11-10T09:22:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "8d350a5f23d0afed"
+    },
+    "04-new-column": {
+     "attempts": 5,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:39:00.000Z",
+     "lastAt": "2026-11-10T09:39:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 5,
+     "firstPassHash": "822cc5be5ffa88d9"
+    },
+    "05-value-counts": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:45:00.000Z",
+     "lastAt": "2026-11-10T09:45:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "6b8c1a4a691123de"
+    },
+    "06-missing-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:51:00.000Z",
+     "lastAt": "2026-11-10T09:51:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "6a6c3107d5ce867e"
+    },
+    "07-groupby-agg": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:04:00.000Z",
+     "lastAt": "2026-11-10T10:06:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "1bc4cd77642a30db"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 2,
+     "passed": false,
+     "firstPassAt": null,
+     "lastAt": "2026-11-10T10:11:00.000Z",
+     "lastKind": "wrong_values",
+     "triesToPass": null,
+     "firstPassHash": null
+    },
+    "09-merge": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:28:00.000Z",
+     "lastAt": "2026-11-10T10:30:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "9b048bfb21f42483"
+    },
+    "10-pivot-table": {
+     "attempts": 2,
+     "passed": false,
+     "firstPassAt": null,
+     "lastAt": "2026-11-10T10:39:00.000Z",
+     "lastKind": "wrong_values",
+     "triesToPass": null,
+     "firstPassHash": null
+    },
+    "11-dates": {
+     "attempts": 2,
+     "passed": false,
+     "firstPassAt": null,
+     "lastAt": "2026-11-10T11:01:00.000Z",
+     "lastKind": "wrong_dtype",
+     "triesToPass": null,
+     "firstPassHash": null
+    },
+    "12-string-methods": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:20:00.000Z",
+     "lastAt": "2026-11-10T11:20:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "a8c94b9c44dbfb3c"
+    },
+    "13-apply-and-map": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:29:00.000Z",
+     "lastAt": "2026-11-10T11:29:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "801c32724b938e12"
+    },
+    "14-top-n-per-group": {
+     "attempts": 6,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:47:00.000Z",
+     "lastAt": "2026-11-10T11:47:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 6,
+     "firstPassHash": "bd5aeabbf5459b7d"
+    },
+    "15-clean-up-inventory": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:56:00.000Z",
+     "lastAt": "2026-11-10T11:56:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "d50fd673d252e07e"
+    }
+   }
+  },
+  {
+   "id": "demo-11",
+   "nickname": "Student 11",
+   "joinedAt": "2026-11-10T09:32:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:43:00.000Z",
+     "lastAt": "2026-11-10T09:43:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "851a5e1e9a9ef8b0"
+    },
+    "02-filter-rows": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:50:00.000Z",
+     "lastAt": "2026-11-10T09:50:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "dcb294c465fd2346"
+    },
+    "03-sort-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:53:00.000Z",
+     "lastAt": "2026-11-10T09:53:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "b950b2f304d8fc77"
+    },
+    "04-new-column": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:55:00.000Z",
+     "lastAt": "2026-11-10T09:55:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "04ae1ef8c33ed43b"
+    },
+    "05-value-counts": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:58:00.000Z",
+     "lastAt": "2026-11-10T09:58:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "53e060d727d6a1d9"
+    },
+    "06-missing-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:05:00.000Z",
+     "lastAt": "2026-11-10T10:05:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "bf70ee336e8e1635"
+    },
+    "07-groupby-agg": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:09:00.000Z",
+     "lastAt": "2026-11-10T10:09:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "5e6b0a32825862a5"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:18:00.000Z",
+     "lastAt": "2026-11-10T10:18:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "44d58c0eb45ee3b0"
+    },
+    "09-merge": {
+     "attempts": 6,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:41:00.000Z",
+     "lastAt": "2026-11-10T10:41:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 6,
+     "firstPassHash": "f2824e67275fa241"
+    },
+    "10-pivot-table": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:46:00.000Z",
+     "lastAt": "2026-11-10T10:46:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "2f7671b216a5f2b9"
+    },
+    "11-dates": {
+     "attempts": 2,
+     "passed": false,
+     "firstPassAt": null,
+     "lastAt": "2026-11-10T10:54:00.000Z",
+     "lastKind": "exception",
+     "triesToPass": null,
+     "firstPassHash": null
+    },
+    "12-string-methods": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:13:00.000Z",
+     "lastAt": "2026-11-10T11:13:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "0fa8a4d9851fe6fc"
+    },
+    "13-apply-and-map": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:24:00.000Z",
+     "lastAt": "2026-11-10T11:24:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "0af920f7c6de22cc"
+    },
+    "14-top-n-per-group": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:35:00.000Z",
+     "lastAt": "2026-11-10T11:35:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "30c6f37e412e2234"
+    },
+    "15-clean-up-inventory": {
+     "attempts": 6,
+     "passed": false,
+     "firstPassAt": null,
+     "lastAt": "2026-11-10T11:52:00.000Z",
+     "lastKind": "wrong_shape",
+     "triesToPass": null,
+     "firstPassHash": null
+    }
+   }
+  },
+  {
+   "id": "demo-12",
+   "nickname": "Student 12",
+   "joinedAt": "2026-11-10T09:09:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:15:00.000Z",
+     "lastAt": "2026-11-10T09:15:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "525974e48be134af"
+    },
+    "02-filter-rows": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:22:00.000Z",
+     "lastAt": "2026-11-10T09:22:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "8991666208a41bbe"
+    },
+    "03-sort-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:29:00.000Z",
+     "lastAt": "2026-11-10T09:29:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "c2d349e4f2daea98"
+    },
+    "04-new-column": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:31:00.000Z",
+     "lastAt": "2026-11-10T09:31:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "d4a06228460ad57f"
+    },
+    "05-value-counts": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:35:00.000Z",
+     "lastAt": "2026-11-10T09:35:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "35d417b352e1d140"
+    },
+    "06-missing-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:40:00.000Z",
+     "lastAt": "2026-11-10T09:40:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "50740d92a70db1db"
+    },
+    "07-groupby-agg": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:47:00.000Z",
+     "lastAt": "2026-11-10T09:47:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "4102c7a0a5823bac"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:52:00.000Z",
+     "lastAt": "2026-11-10T09:52:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "489b558ddfeef1a6"
+    },
+    "09-merge": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:59:00.000Z",
+     "lastAt": "2026-11-10T09:59:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "2baaffb800a65ea8"
+    }
+   }
+  },
+  {
+   "id": "demo-13",
+   "nickname": "Student 13",
+   "joinedAt": "2026-11-10T09:29:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:34:00.000Z",
+     "lastAt": "2026-11-10T09:34:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "d08e631a96197432"
+    },
+    "02-filter-rows": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:44:00.000Z",
+     "lastAt": "2026-11-10T09:44:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "226fca32549ed85e"
+    },
+    "03-sort-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:50:00.000Z",
+     "lastAt": "2026-11-10T09:50:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "d294dffbaac8e7e5"
+    },
+    "04-new-column": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:55:00.000Z",
+     "lastAt": "2026-11-10T09:55:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "85226caf43a19e69"
+    },
+    "05-value-counts": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:58:00.000Z",
+     "lastAt": "2026-11-10T09:58:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "37690938db89bbd3"
+    },
+    "06-missing-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:05:00.000Z",
+     "lastAt": "2026-11-10T10:05:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "26547169e01a82f7"
+    },
+    "07-groupby-agg": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:10:00.000Z",
+     "lastAt": "2026-11-10T10:10:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "4bfe8bc0edc94ea1"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:14:00.000Z",
+     "lastAt": "2026-11-10T10:14:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "020ffc8418ea6744"
+    },
+    "09-merge": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:21:00.000Z",
+     "lastAt": "2026-11-10T10:23:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "4e57e83672418e33"
+    },
+    "10-pivot-table": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:33:00.000Z",
+     "lastAt": "2026-11-10T10:33:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "4757ba7f911d79d2"
+    },
+    "11-dates": {
+     "attempts": 4,
+     "passed": false,
+     "firstPassAt": null,
+     "lastAt": "2026-11-10T10:49:00.000Z",
+     "lastKind": "wrong_values",
+     "triesToPass": null,
+     "firstPassHash": null
+    }
+   }
+  },
+  {
+   "id": "demo-14",
+   "nickname": "Student 14",
+   "joinedAt": "2026-11-10T09:10:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:17:00.000Z",
+     "lastAt": "2026-11-10T09:17:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "559ecf33b3022c3e"
+    },
+    "02-filter-rows": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:24:00.000Z",
+     "lastAt": "2026-11-10T09:24:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "2a0b46192a3beff6"
+    },
+    "03-sort-values": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:27:00.000Z",
+     "lastAt": "2026-11-10T09:29:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "8e5011b43dd60151"
+    },
+    "04-new-column": {
+     "attempts": 5,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:43:00.000Z",
+     "lastAt": "2026-11-10T09:45:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "205c96dc4847d4ce"
+    },
+    "05-value-counts": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:47:00.000Z",
+     "lastAt": "2026-11-10T09:47:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "cac249078b602b4b"
+    },
+    "06-missing-values": {
+     "attempts": 5,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:02:00.000Z",
+     "lastAt": "2026-11-10T10:04:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "d525c29364ec0dc8"
+    },
+    "07-groupby-agg": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:12:00.000Z",
+     "lastAt": "2026-11-10T10:12:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "0fe58c2f83046b69"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:16:00.000Z",
+     "lastAt": "2026-11-10T10:16:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "3ebe434aa4783f34"
+    },
+    "09-merge": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:19:00.000Z",
+     "lastAt": "2026-11-10T10:19:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "f075a0a597e5b0ac"
+    },
+    "10-pivot-table": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:21:00.000Z",
+     "lastAt": "2026-11-10T10:21:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "380431569840b167"
+    },
+    "11-dates": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:28:00.000Z",
+     "lastAt": "2026-11-10T10:28:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "428e891497e81e33"
+    },
+    "12-string-methods": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:45:00.000Z",
+     "lastAt": "2026-11-10T10:45:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 4,
+     "firstPassHash": "7e4e46182c45740e"
+    },
+    "13-apply-and-map": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:52:00.000Z",
+     "lastAt": "2026-11-10T10:52:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "3bea0673fc8f47e2"
+    }
+   }
+  },
+  {
+   "id": "demo-15",
+   "nickname": "Student 15",
+   "joinedAt": "2026-11-10T09:29:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:49:00.000Z",
+     "lastAt": "2026-11-10T09:49:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "380545ce3c698e65"
+    },
+    "02-filter-rows": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:01:00.000Z",
+     "lastAt": "2026-11-10T10:01:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "0e02231886622a0d"
+    },
+    "03-sort-values": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:17:00.000Z",
+     "lastAt": "2026-11-10T10:17:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "c3f43d9eec57c070"
+    },
+    "04-new-column": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:19:00.000Z",
+     "lastAt": "2026-11-10T10:19:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "4fc99bc2625b1fb7"
+    },
+    "05-value-counts": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:26:00.000Z",
+     "lastAt": "2026-11-10T10:26:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "9126533d61b8b797"
+    },
+    "06-missing-values": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:31:00.000Z",
+     "lastAt": "2026-11-10T10:31:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "09c5147f703b1e47"
+    },
+    "07-groupby-agg": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:37:00.000Z",
+     "lastAt": "2026-11-10T10:37:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "d94c7194955ec1ca"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 5,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:52:00.000Z",
+     "lastAt": "2026-11-10T10:52:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 5,
+     "firstPassHash": "3071d153e11a9574"
+    },
+    "09-merge": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:03:00.000Z",
+     "lastAt": "2026-11-10T11:05:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "befb1e4b1dd50721"
+    }
+   }
+  },
+  {
+   "id": "demo-16",
+   "nickname": "Student 16",
+   "joinedAt": "2026-11-10T09:15:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:20:00.000Z",
+     "lastAt": "2026-11-10T09:20:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "28c97ee38992f997"
+    },
+    "02-filter-rows": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:22:00.000Z",
+     "lastAt": "2026-11-10T09:22:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "17be9710ad3604fe"
+    },
+    "03-sort-values": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:34:00.000Z",
+     "lastAt": "2026-11-10T09:34:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "f8e2fbf0d7569e2f"
+    },
+    "04-new-column": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:47:00.000Z",
+     "lastAt": "2026-11-10T09:47:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "5a226672a06ad130"
+    },
+    "05-value-counts": {
+     "attempts": 4,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:57:00.000Z",
+     "lastAt": "2026-11-10T09:59:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "3abfa2fdce7201d7"
+    },
+    "06-missing-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:02:00.000Z",
+     "lastAt": "2026-11-10T10:02:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "c31c88a6945fe2b2"
+    },
+    "07-groupby-agg": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:09:00.000Z",
+     "lastAt": "2026-11-10T10:09:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "64973714f90a3c78"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 5,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:32:00.000Z",
+     "lastAt": "2026-11-10T10:32:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 5,
+     "firstPassHash": "9f3ca221b917b539"
+    },
+    "09-merge": {
+     "attempts": 6,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:59:00.000Z",
+     "lastAt": "2026-11-10T10:59:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 6,
+     "firstPassHash": "0b89ac6b6dbba8de"
+    },
+    "10-pivot-table": {
+     "attempts": 5,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:15:00.000Z",
+     "lastAt": "2026-11-10T11:15:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 5,
+     "firstPassHash": "709b011f3827e9e9"
+    },
+    "11-dates": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:29:00.000Z",
+     "lastAt": "2026-11-10T11:29:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "ce27e2e058c6e24d"
+    },
+    "12-string-methods": {
+     "attempts": 6,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:49:00.000Z",
+     "lastAt": "2026-11-10T11:49:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 6,
+     "firstPassHash": "798109cec57c6039"
+    },
+    "13-apply-and-map": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:57:00.000Z",
+     "lastAt": "2026-11-10T11:57:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "9c601d632489ee2f"
+    },
+    "14-top-n-per-group": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T12:05:00.000Z",
+     "lastAt": "2026-11-10T12:05:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "777e724c20bb3ce9"
+    },
+    "15-clean-up-inventory": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T12:08:00.000Z",
+     "lastAt": "2026-11-10T12:08:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "01ced98f366f406c"
+    }
+   }
+  },
+  {
+   "id": "demo-17",
+   "nickname": "Student 17",
+   "joinedAt": "2026-11-10T09:29:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:34:00.000Z",
+     "lastAt": "2026-11-10T09:34:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "f548408238eae065"
+    },
+    "02-filter-rows": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:39:00.000Z",
+     "lastAt": "2026-11-10T09:39:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "8b8ac7aacae2a20f"
+    },
+    "03-sort-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:46:00.000Z",
+     "lastAt": "2026-11-10T09:46:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "824845612968b2e6"
+    },
+    "04-new-column": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:52:00.000Z",
+     "lastAt": "2026-11-10T09:52:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "50a4c885fd856cf9"
+    },
+    "05-value-counts": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:55:00.000Z",
+     "lastAt": "2026-11-10T09:55:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "7d85d04a68298379"
+    },
+    "06-missing-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:00:00.000Z",
+     "lastAt": "2026-11-10T10:00:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "31261671a4eefa0e"
+    },
+    "07-groupby-agg": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:04:00.000Z",
+     "lastAt": "2026-11-10T10:06:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "f70bce170e57bdf7"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:10:00.000Z",
+     "lastAt": "2026-11-10T10:12:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "82bea52d15a0ed7f"
+    },
+    "09-merge": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:17:00.000Z",
+     "lastAt": "2026-11-10T10:17:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "e7fe167ad4c4f170"
+    },
+    "10-pivot-table": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:28:00.000Z",
+     "lastAt": "2026-11-10T10:28:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "6a2f2071406afccf"
+    },
+    "11-dates": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:43:00.000Z",
+     "lastAt": "2026-11-10T10:43:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "982285ac8b407b68"
+    },
+    "12-string-methods": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:45:00.000Z",
+     "lastAt": "2026-11-10T10:45:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "ec1a9642a017a3bd"
+    },
+    "13-apply-and-map": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:50:00.000Z",
+     "lastAt": "2026-11-10T10:50:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "776f879374fdacb4"
+    },
+    "14-top-n-per-group": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:59:00.000Z",
+     "lastAt": "2026-11-10T10:59:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "70caa401a9ecb0ab"
+    },
+    "15-clean-up-inventory": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T11:01:00.000Z",
+     "lastAt": "2026-11-10T11:01:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "5c40d70803b0a58c"
+    }
+   }
+  },
+  {
+   "id": "demo-18",
+   "nickname": "Student 18",
+   "joinedAt": "2026-11-10T09:19:00.000Z",
+   "results": {
+    "01-select-columns": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:26:00.000Z",
+     "lastAt": "2026-11-10T09:26:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "c5888403b6e4ca55"
+    },
+    "02-filter-rows": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:28:00.000Z",
+     "lastAt": "2026-11-10T09:28:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "ebd44c8dd8b3599c"
+    },
+    "03-sort-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:33:00.000Z",
+     "lastAt": "2026-11-10T09:33:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "dd2f2cc058ef5373"
+    },
+    "04-new-column": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:43:00.000Z",
+     "lastAt": "2026-11-10T09:43:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "f1b1d6fd69406284"
+    },
+    "05-value-counts": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:46:00.000Z",
+     "lastAt": "2026-11-10T09:46:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "3569a21fc4e6ec3d"
+    },
+    "06-missing-values": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:50:00.000Z",
+     "lastAt": "2026-11-10T09:50:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "cc9aef84127bdac8"
+    },
+    "07-groupby-agg": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T09:52:00.000Z",
+     "lastAt": "2026-11-10T09:52:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "f0f1bbc3e4059592"
+    },
+    "08-multiple-aggregations": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:04:00.000Z",
+     "lastAt": "2026-11-10T10:04:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "aef9c2e7cbfa0d1b"
+    },
+    "09-merge": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:18:00.000Z",
+     "lastAt": "2026-11-10T10:18:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 3,
+     "firstPassHash": "38382fdb4e20af79"
+    },
+    "10-pivot-table": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:30:00.000Z",
+     "lastAt": "2026-11-10T10:30:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "93013c4f23964b7f"
+    },
+    "11-dates": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:32:00.000Z",
+     "lastAt": "2026-11-10T10:32:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "562cef437db26867"
+    },
+    "12-string-methods": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:37:00.000Z",
+     "lastAt": "2026-11-10T10:37:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "8232dd453721e7eb"
+    },
+    "13-apply-and-map": {
+     "attempts": 2,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:41:00.000Z",
+     "lastAt": "2026-11-10T10:43:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "f7a19a77a2ffd26e"
+    },
+    "14-top-n-per-group": {
+     "attempts": 1,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:47:00.000Z",
+     "lastAt": "2026-11-10T10:47:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 1,
+     "firstPassHash": "ccbf53b542e6b975"
+    },
+    "15-clean-up-inventory": {
+     "attempts": 3,
+     "passed": true,
+     "firstPassAt": "2026-11-10T10:54:00.000Z",
+     "lastAt": "2026-11-10T10:56:00.000Z",
+     "lastKind": "passed",
+     "triesToPass": 2,
+     "firstPassHash": "8675ceb01152c2be"
+    }
+   }
+  }
+ ],
+ "perExercise": {
+  "01-select-columns": {
+   "attempted": 18,
+   "passed": 17,
+   "failures": {
+    "wrong_shape": 4,
+    "wrong_columns": 3,
+    "wrong_values": 1
+   }
+  },
+  "02-filter-rows": {
+   "attempted": 18,
+   "passed": 18,
+   "failures": {
+    "wrong_columns": 1,
+    "wrong_shape": 2,
+    "wrong_values": 1,
+    "exception": 1
+   }
+  },
+  "03-sort-values": {
+   "attempted": 18,
+   "passed": 18,
+   "failures": {
+    "wrong_values": 5,
+    "wrong_shape": 5,
+    "wrong_columns": 1
+   }
+  },
+  "04-new-column": {
+   "attempted": 18,
+   "passed": 18,
+   "failures": {
+    "exception": 5,
+    "wrong_columns": 1,
+    "syntax": 3,
+    "wrong_values": 8
+   }
+  },
+  "05-value-counts": {
+   "attempted": 18,
+   "passed": 18,
+   "failures": {
+    "exception": 3,
+    "wrong_shape": 3,
+    "wrong_values": 1,
+    "syntax": 1
+   }
+  },
+  "06-missing-values": {
+   "attempted": 18,
+   "passed": 18,
+   "failures": {
+    "exception": 5,
+    "wrong_shape": 8,
+    "wrong_values": 5
+   }
+  },
+  "07-groupby-agg": {
+   "attempted": 18,
+   "passed": 18,
+   "failures": {
+    "wrong_columns": 4,
+    "exception": 4,
+    "wrong_values": 3,
+    "syntax": 3,
+    "wrong_shape": 3
+   }
+  },
+  "08-multiple-aggregations": {
+   "attempted": 18,
+   "passed": 17,
+   "failures": {
+    "wrong_shape": 5,
+    "wrong_values": 9,
+    "wrong_columns": 3,
+    "syntax": 3,
+    "exception": 5
+   }
+  },
+  "09-merge": {
+   "attempted": 18,
+   "passed": 16,
+   "failures": {
+    "wrong_shape": 16,
+    "wrong_columns": 8,
+    "wrong_values": 2,
+    "exception": 6
+   }
+  },
+  "10-pivot-table": {
+   "attempted": 15,
+   "passed": 12,
+   "failures": {
+    "wrong_values": 2,
+    "wrong_index": 11,
+    "wrong_columns": 6,
+    "exception": 2
+   }
+  },
+  "11-dates": {
+   "attempted": 14,
+   "passed": 8,
+   "failures": {
+    "exception": 12,
+    "wrong_dtype": 6,
+    "syntax": 5,
+    "wrong_values": 5
+   }
+  },
+  "12-string-methods": {
+   "attempted": 13,
+   "passed": 13,
+   "failures": {
+    "exception": 6,
+    "syntax": 2,
+    "wrong_shape": 4,
+    "wrong_columns": 7,
+    "wrong_values": 4
+   }
+  },
+  "13-apply-and-map": {
+   "attempted": 12,
+   "passed": 11,
+   "failures": {
+    "exception": 5,
+    "wrong_shape": 3,
+    "wrong_columns": 2,
+    "wrong_values": 2,
+    "syntax": 3
+   }
+  },
+  "14-top-n-per-group": {
+   "attempted": 10,
+   "passed": 10,
+   "failures": {
+    "wrong_order": 7,
+    "exception": 3,
+    "wrong_shape": 6,
+    "wrong_values": 3
+   }
+  },
+  "15-clean-up-inventory": {
+   "attempted": 10,
+   "passed": 9,
+   "failures": {
+    "exception": 8,
+    "wrong_values": 7,
+    "syntax": 1,
+    "wrong_columns": 3,
+    "wrong_shape": 1
+   }
+  }
+ }
+}

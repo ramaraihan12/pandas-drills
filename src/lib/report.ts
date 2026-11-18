@@ -33,3 +33,14 @@ export async function removeClass(api: Api, code: string, key: string): Promise<
     return fail(err);
   }
 }
+
+/** The demo class is a static file, so it needs no API. */
+export async function loadDemoReport(url: string, doFetch: typeof fetch = (...a) => fetch(...a)): Promise<Loaded<Report>> {
+  try {
+    const res = await doFetch(url);
+    if (!res.ok) return { ok: false, message: "The demo class could not be loaded. Please try again later." };
+    return { ok: true, value: (await res.json()) as Report };
+  } catch {
+    return { ok: false, message: "Could not load the demo class. Check your connection and try again." };
+  }
+}

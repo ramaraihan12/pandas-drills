@@ -1,7 +1,11 @@
 // Class pages: create a class, join a class, and the teacher's results page.
 // Only used when the build has an API address (see lib/api.ts).
-import { ApiError, type Api, type Report } from "./lib/api.ts";
-import { loadAttempts, loadReport, removeClass } from "./lib/report.ts";
+import { ApiError, type Api } from "./lib/api.ts";
+import { el } from "./dom.ts";
+import { renderDashboard } from "./dashboard-ui.ts";
+import { cellLabel } from "./lib/dashboard.ts";
+import { kindLabel } from "./lib/kinds.ts";
+import { loadAttempts, loadDemoReport, loadReport, removeClass } from "./lib/report.ts";
 import { joinLink, teachLink } from "./lib/route.ts";
 import type { createSessions } from "./lib/session.ts";
 
@@ -14,15 +18,6 @@ export interface ClassUiDeps {
   /** Where "back to the exercises" goes, and what happens after joining. */
   exerciseHash: () => string;
   onSessionChange: () => void;
-}
-
-function el<K extends keyof HTMLElementTagNameMap>(tag: K, props: Partial<HTMLElementTagNameMap[K]> & { class?: string } = {}, ...kids: (Node | string)[]) {
-  const node = document.createElement(tag);
-  const { class: cls, ...rest } = props;
-  if (cls) node.className = cls;
-  Object.assign(node, rest);
-  node.append(...kids);
-  return node;
 }
 
 function errorText(err: unknown): string {
@@ -52,11 +47,13 @@ function linkRow(label: string, url: string) {
   return el("div", { class: "link-row" }, el("p", { class: "sub" }, label), el("div", { class: "copy-line" }, input, btn));
 }
 
-function back(deps: ClassUiDeps) {
+type Shell = Pick<ClassUiDeps, "host" | "exerciseHash">;
+
+function back(deps: Shell) {
   return el("a", { href: deps.exerciseHash(), class: "link back" }, "Back to the exercises");
 }
 
-function show(deps: ClassUiDeps, ...nodes: Node[]) {
+function show(deps: Shell, ...nodes: Node[]) {
   deps.host.textContent = "";
   deps.host.append(...nodes);
 }
@@ -199,64 +196,6 @@ export async function renderJoin(deps: ClassUiDeps, code: string) {
 
 // ---------- teacher results ----------
 
-const KIND_TEXT: Record<string, string> = {
-  passed: "passed",
-  syntax: "syntax error",
-  exception: "error while running",
-  no_result: "no result variable",
-  checker_error: "checker problem",
-  wrong_type: "wrong type",
-  wrong_shape: "wrong number of rows",
-  wrong_columns: "wrong columns",
-  wrong_values: "wrong values",
-  wrong_dtype: "wrong data type",
-  wrong_index: "wrong row labels",
-  wrong_order: "wrong order",
-  timeout: "took too long",
-  worker_error: "page error",
-};
-
-function renderTable(report: Report, onCell: (studentId: string, nickname: string, exerciseId: string) => void): HTMLElement {
-  const wrap = el("div", { class: "table-wrap", tabIndex: 0 });
-  wrap.setAttribute("role", "region");
-  wrap.setAttribute("aria-label", "Results by student and exercise");
-  const table = el("table", { class: "results" });
-  const head = table.createTHead().insertRow();
-  head.append(el("th", { scope: "col" }, "Student"));
-  for (const id of report.exercises) {
-    const th = el("th", { scope: "col", title: id }, id.slice(0, 2));
-    head.append(th);
-  }
-  const body = table.createTBody();
-  for (const s of report.students) {
-    const tr = body.insertRow();
-    tr.append(el("th", { scope: "row" }, s.nickname));
-    for (const ex of report.exercises) {
-      const cell = s.results[ex];
-      const td = tr.insertCell();
-      if (!cell) {
-        td.className = "none";
-        td.textContent = "-";
-        td.title = "No attempts yet";
-        continue;
-      }
-      const btn = el("button", { type: "button", class: `cell ${cell.passed ? "ok" : "no"}` }, `${cell.passed ? "\u2713" : "\u2717"} ${cell.attempts}`);
-      btn.setAttribute("aria-label", `${s.nickname}, exercise ${ex.slice(0, 2)}: ${cell.passed ? "passed" : "not passed"}, ${cell.attempts} attempt${cell.attempts === 1 ? "" : "s"}. Show the code.`);
-      btn.title = `${cell.passed ? "Passed" : "Not passed"} after ${cell.attempts} attempt${cell.attempts === 1 ? "" : "s"}. Last result: ${KIND_TEXT[cell.lastKind] ?? cell.lastKind}`;
-      btn.addEventListener("click", () => onCell(s.id, s.nickname, ex));
-      td.append(btn);
-    }
-  }
-  const foot = table.createTFoot().insertRow();
-  foot.append(el("th", { scope: "row" }, "Passed / tried"));
-  for (const ex of report.exercises) {
-    const p = report.perExercise[ex] ?? { attempted: 0, passed: 0 };
-    foot.insertCell().textContent = `${p.passed}/${p.attempted}`;
-  }
-  wrap.append(table);
-  return wrap;
-}
-
 export async function renderTeach(deps: ClassUiDeps, code: string, key: string) {
   show(deps, el("section", { class: "panel" }, el("p", { class: "muted" }, "Loading results...")));
   const loaded = await loadReport(deps.api, code, key);
@@ -280,7 +219,7 @@ export async function renderTeach(deps: ClassUiDeps, code: string, key: string) 
     for (const a of res.value) {
       const when = new Date(a.at).toLocaleString();
       detail.append(
-        el("p", { class: "sub" }, `${a.passed ? "Passed" : "Not passed"} (${KIND_TEXT[a.kind] ?? a.kind}) at ${when}`),
+        el("p", { class: "sub" }, `${a.passed ? "Passed" : "Not passed"} (${kindLabel(a.kind)}) at ${when}`),
         el("pre", { class: "attempt", tabIndex: 0, textContent: a.code }),
       );
     }
@@ -324,13 +263,43 @@ export async function renderTeach(deps: ClassUiDeps, code: string, key: string) 
       { class: "panel" },
       el("p", { class: "meta" }, `Class code ${code} · ${report.students.length} student${report.students.length === 1 ? "" : "s"} · deleted automatically on ${expires}`),
       el("h2", {}, report.name),
-      report.students.length === 0
-        ? el("p", { class: "muted" }, "Nobody has joined yet. Share the student link, then press Refresh.")
-        : el("p", { class: "muted small" }, "Each cell shows passed (\u2713) or not yet (\u2717) and the number of Checks. Select a cell to read the code."),
-      report.students.length ? renderTable(report, onCell) : el("span"),
-      detail,
+      renderDashboard({ report, onCell, detail, fileStem: `class-${code}` }),
       el("div", { class: "actions" }, refresh, del),
       confirmBox,
+      back(deps),
+    ),
+  );
+}
+
+// ---------- the demo class (static data, no API) ----------
+
+export async function renderDemo(deps: Shell, url: string) {
+  show(deps, el("section", { class: "panel" }, el("p", { class: "muted" }, "Loading the demo class...")));
+  const loaded = await loadDemoReport(url);
+  if (!loaded.ok) {
+    show(deps, el("section", { class: "panel narrow" }, el("h2", {}, "Could not open the demo"), el("p", {}, loaded.message), back(deps)));
+    return;
+  }
+  const report = loaded.value;
+  const detail = el("div", { class: "detail" });
+  detail.setAttribute("aria-live", "polite");
+  const onCell: Parameters<typeof renderDashboard>[0]["onCell"] = (_id, nickname, exerciseId, cell) => {
+    detail.textContent = "";
+    detail.append(
+      el("h3", {}, nickname),
+      el("p", {}, cellLabel(nickname, exerciseId, cell)),
+      el("p", { class: "muted small" }, "In a real class this panel lists the student's attempts with their code. The demo has no code, because nobody wrote it."),
+    );
+  };
+  show(
+    deps,
+    el(
+      "section",
+      { class: "panel" },
+      el("p", { class: "demo-banner", id: "demo-banner" }, "Made-up class with generated data, to show what a teacher sees."),
+      el("p", { class: "meta" }, `Demo class · ${report.students.length} students`),
+      el("h2", {}, report.name),
+      renderDashboard({ report, onCell, detail, fileStem: "demo-class" }),
       back(deps),
     ),
   );

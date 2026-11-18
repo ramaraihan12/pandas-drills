@@ -9,7 +9,7 @@ import { API_URL, ApiError, classesEnabled, createApi, type SubmissionBody } fro
 import { createSubmissionQueue } from "./lib/queue.ts";
 import { parseRoute } from "./lib/route.ts";
 import { createSessions } from "./lib/session.ts";
-import { renderJoin, renderNewClass, renderTeach, type ClassUiDeps } from "./classes-ui.ts";
+import { renderDemo, renderJoin, renderNewClass, renderTeach, type ClassUiDeps } from "./classes-ui.ts";
 import type { Bundle, Exercise, RunMode } from "./lib/types.ts";
 import { Runner, type EngineState } from "./runner.ts";
 import { PROGRESS_ESTIMATE_BYTES, TIME_LIMIT_MS } from "./config.ts";
@@ -298,16 +298,19 @@ const classDeps: ClassUiDeps = {
 };
 
 function applyRoute() {
-  const route = classesEnabled ? parseRoute(location.hash) : { view: "exercise" as const };
+  const parsed = parseRoute(location.hash);
+  // the demo class is static, so it works even when the class features are off
+  const route = classesEnabled || parsed.view === "demo" ? parsed : { view: "exercise" as const };
   const inClassView = route.view !== "exercise";
   els.layout.hidden = inClassView;
   document.body.classList.toggle("in-class", inClassView);
   els.classView.hidden = !inClassView;
   if (route.view === "new-class") renderNewClass(classDeps);
   else if (route.view === "join") void renderJoin(classDeps, route.code);
+  else if (route.view === "demo") void renderDemo(classDeps, `${import.meta.env.BASE_URL}demo/report.json`);
   else if (route.view === "teach") void renderTeach(classDeps, route.code, route.key);
   if (inClassView) {
-    document.title = "Classes - pandas drills";
+    document.title = route.view === "demo" ? "Demo class - pandas drills" : "Classes - pandas drills";
     els.classView.focus({ preventScroll: true });
   } else {
     document.title = `${current.title} - pandas drills`;

@@ -24,6 +24,12 @@ export interface ReportCell {
   passed: boolean;
   firstPassAt: string | null;
   lastKind: string;
+  /** When the newest attempt was made. */
+  lastAt?: string;
+  /** How many attempts it took up to and including the first pass; null when not passed. */
+  triesToPass?: number | null;
+  /** A short hash of the normalised code of the first passing attempt. */
+  firstPassHash?: string | null;
 }
 
 export interface Report {
@@ -31,7 +37,7 @@ export interface Report {
   expiresAt: string;
   exercises: string[];
   students: { id: string; nickname: string; joinedAt: string; results: Record<string, ReportCell> }[];
-  perExercise: Record<string, { attempted: number; passed: number }>;
+  perExercise: Record<string, { attempted: number; passed: number; failures?: Record<string, number> }>;
 }
 
 export interface Attempt {
