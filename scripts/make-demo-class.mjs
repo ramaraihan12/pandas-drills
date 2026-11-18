@@ -40,14 +40,24 @@ const BASE = { easy: 0.93, medium: 0.65, hard: 0.5 };
 // the harder topics get a lower chance on top of their difficulty label
 const EXTRA = { "09-merge": 0.65, "10-pivot-table": 0.62, "11-dates": 0.58, "13-apply-and-map": 0.8, "14-top-n-per-group": 0.7, "15-clean-up-inventory": 0.7 };
 
-// what goes wrong in each exercise, most common first
+// what goes wrong in each exercise, taken from what that exercise's own wrong_*.py fixtures produce
+// when graded (tests/test_exercises.py grades them; the weight is how many fixtures give that kind)
 const FAILS = {
-  default: [["wrong_values", 3], ["exception", 2], ["wrong_columns", 2], ["wrong_shape", 2], ["syntax", 1]],
-  "09-merge": [["wrong_shape", 5], ["wrong_columns", 3], ["exception", 2], ["wrong_values", 1]],
-  "10-pivot-table": [["wrong_index", 4], ["wrong_columns", 3], ["wrong_values", 2], ["exception", 1]],
-  "11-dates": [["exception", 4], ["wrong_dtype", 4], ["wrong_values", 2], ["syntax", 1]],
-  "06-missing-values": [["wrong_shape", 3], ["wrong_values", 3], ["exception", 1]],
-  "14-top-n-per-group": [["wrong_order", 3], ["wrong_shape", 3], ["wrong_values", 2], ["exception", 1]],
+  "01-select-columns": [["exception", 2], ["wrong_columns", 1], ["wrong_type", 1]],
+  "02-filter-rows": [["wrong_shape", 3]],
+  "03-sort-values": [["wrong_values", 2], ["wrong_shape", 1]],
+  "04-new-column": [["wrong_columns", 1], ["wrong_type", 1], ["wrong_values", 1]],
+  "05-value-counts": [["wrong_type", 3], ["wrong_order", 1]],
+  "06-missing-values": [["wrong_values", 3], ["wrong_shape", 1]],
+  "07-groupby-agg": [["wrong_columns", 2], ["wrong_values", 1]],
+  "08-multiple-aggregations": [["wrong_values", 2], ["wrong_columns", 1]],
+  "09-merge": [["wrong_shape", 2], ["wrong_columns", 1]],
+  "10-pivot-table": [["wrong_values", 2], ["wrong_columns", 1]],
+  "11-dates": [["wrong_columns", 2], ["wrong_dtype", 1]],
+  "12-string-methods": [["wrong_values", 3]],
+  "13-apply-and-map": [["wrong_values", 2], ["exception", 1], ["wrong_columns", 1]],
+  "14-top-n-per-group": [["wrong_order", 1], ["wrong_shape", 1], ["wrong_values", 1]],
+  "15-clean-up-inventory": [["wrong_dtype", 3], ["wrong_index", 1], ["wrong_shape", 1]],
 };
 
 const hash = (text) => createHash("sha256").update(text).digest("hex").slice(0, 16);
@@ -74,7 +84,7 @@ for (let n = 1; n <= STUDENTS; n++) {
     const stuckTries = STUCK[name]?.[id];
     if (idx >= reach && stuckTries === undefined) return;
     const p = Math.min(0.97, BASE[difficulty[id]] * (EXTRA[id] ?? 1) * skill);
-    const fails = FAILS[id] ?? FAILS.default;
+    const fails = FAILS[id];
     const isPair = SAME_PAIR.exercise === id && SAME_PAIR.students.includes(name);
     const limit = stuckTries ?? 6;
     const seq = []; // the kind of each attempt, in order, with the time it was made
@@ -90,9 +100,10 @@ for (let n = 1; n <= STUDENTS; n++) {
       clock += 2 * 60_000;
       seq.push({ kind: "passed", at: clock }); // checked again after passing
     }
-    for (const a of seq) if (a.kind !== "passed") perExercise[id].failures[a.kind] = (perExercise[id].failures[a.kind] ?? 0) + 1;
+    // the report counts distinct students per kind, not attempts
+    for (const kind of new Set(seq.map((a) => a.kind))) if (kind !== "passed") perExercise[id].failures[kind] = (perExercise[id].failures[kind] ?? 0) + 1;
     const passIndex = seq.findIndex((a) => a.kind === "passed");
-        results[id] = {
+    results[id] = {
       attempts: seq.length,
       passed,
       firstPassAt: passed ? iso(seq[passIndex].at) : null,

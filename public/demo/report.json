@@ -198,7 +198,7 @@
      "passed": false,
      "firstPassAt": null,
      "lastAt": "2026-11-10T10:56:00.000Z",
-     "lastKind": "wrong_index",
+     "lastKind": "wrong_values",
      "triesToPass": null,
      "firstPassHash": null
     },
@@ -207,7 +207,7 @@
      "passed": false,
      "firstPassAt": null,
      "lastAt": "2026-11-10T11:19:00.000Z",
-     "lastKind": "wrong_dtype",
+     "lastKind": "wrong_columns",
      "triesToPass": null,
      "firstPassHash": null
     },
@@ -340,7 +340,7 @@
      "passed": false,
      "firstPassAt": null,
      "lastAt": "2026-11-10T10:24:00.000Z",
-     "lastKind": "exception",
+     "lastKind": "wrong_columns",
      "triesToPass": null,
      "firstPassHash": null
     },
@@ -543,7 +543,7 @@
      "passed": false,
      "firstPassAt": null,
      "lastAt": "2026-11-10T09:42:00.000Z",
-     "lastKind": "wrong_shape",
+     "lastKind": "wrong_type",
      "triesToPass": null,
      "firstPassHash": null
     },
@@ -633,7 +633,7 @@
      "passed": false,
      "firstPassAt": null,
      "lastAt": "2026-11-10T11:40:00.000Z",
-     "lastKind": "syntax",
+     "lastKind": "wrong_dtype",
      "triesToPass": null,
      "firstPassHash": null
     },
@@ -775,7 +775,7 @@
      "passed": false,
      "firstPassAt": null,
      "lastAt": "2026-11-10T11:16:00.000Z",
-     "lastKind": "wrong_columns",
+     "lastKind": "exception",
      "triesToPass": null,
      "firstPassHash": null
     },
@@ -881,7 +881,7 @@
      "passed": false,
      "firstPassAt": null,
      "lastAt": "2026-11-10T10:06:00.000Z",
-     "lastKind": "exception",
+     "lastKind": "wrong_columns",
      "triesToPass": null,
      "firstPassHash": null
     },
@@ -899,7 +899,7 @@
      "passed": false,
      "firstPassAt": null,
      "lastAt": "2026-11-10T10:30:00.000Z",
-     "lastKind": "wrong_dtype",
+     "lastKind": "wrong_columns",
      "triesToPass": null,
      "firstPassHash": null
     },
@@ -1244,7 +1244,7 @@
      "passed": false,
      "firstPassAt": null,
      "lastAt": "2026-11-10T10:39:00.000Z",
-     "lastKind": "wrong_values",
+     "lastKind": "wrong_columns",
      "triesToPass": null,
      "firstPassHash": null
     },
@@ -1253,7 +1253,7 @@
      "passed": false,
      "firstPassAt": null,
      "lastAt": "2026-11-10T11:01:00.000Z",
-     "lastKind": "wrong_dtype",
+     "lastKind": "wrong_columns",
      "triesToPass": null,
      "firstPassHash": null
     },
@@ -1395,7 +1395,7 @@
      "passed": false,
      "firstPassAt": null,
      "lastAt": "2026-11-10T10:54:00.000Z",
-     "lastKind": "exception",
+     "lastKind": "wrong_columns",
      "triesToPass": null,
      "firstPassHash": null
     },
@@ -1625,7 +1625,7 @@
      "passed": false,
      "firstPassAt": null,
      "lastAt": "2026-11-10T10:49:00.000Z",
-     "lastKind": "wrong_values",
+     "lastKind": "wrong_dtype",
      "triesToPass": null,
      "firstPassHash": null
     }
@@ -2275,152 +2275,123 @@
    "attempted": 18,
    "passed": 17,
    "failures": {
-    "wrong_shape": 4,
-    "wrong_columns": 3,
-    "wrong_values": 1
+    "wrong_columns": 5,
+    "wrong_type": 2,
+    "exception": 1
    }
   },
   "02-filter-rows": {
    "attempted": 18,
    "passed": 18,
    "failures": {
-    "wrong_columns": 1,
-    "wrong_shape": 2,
-    "wrong_values": 1,
-    "exception": 1
+    "wrong_shape": 5
    }
   },
   "03-sort-values": {
    "attempted": 18,
    "passed": 18,
    "failures": {
-    "wrong_values": 5,
-    "wrong_shape": 5,
-    "wrong_columns": 1
+    "wrong_values": 3,
+    "wrong_shape": 3
    }
   },
   "04-new-column": {
    "attempted": 18,
    "passed": 18,
    "failures": {
-    "exception": 5,
-    "wrong_columns": 1,
-    "syntax": 3,
-    "wrong_values": 8
+    "wrong_type": 4,
+    "wrong_values": 3,
+    "wrong_columns": 7
    }
   },
   "05-value-counts": {
    "attempted": 18,
    "passed": 18,
    "failures": {
-    "exception": 3,
-    "wrong_shape": 3,
-    "wrong_values": 1,
-    "syntax": 1
+    "wrong_type": 4,
+    "wrong_order": 3
    }
   },
   "06-missing-values": {
    "attempted": 18,
    "passed": 18,
    "failures": {
-    "exception": 5,
-    "wrong_shape": 8,
-    "wrong_values": 5
+    "wrong_shape": 4,
+    "wrong_values": 7
    }
   },
   "07-groupby-agg": {
    "attempted": 18,
    "passed": 18,
    "failures": {
-    "wrong_columns": 4,
-    "exception": 4,
-    "wrong_values": 3,
-    "syntax": 3,
-    "wrong_shape": 3
+    "wrong_columns": 7,
+    "wrong_values": 5
    }
   },
   "08-multiple-aggregations": {
    "attempted": 18,
    "passed": 17,
    "failures": {
-    "wrong_shape": 5,
-    "wrong_values": 9,
-    "wrong_columns": 3,
-    "syntax": 3,
-    "exception": 5
+    "wrong_columns": 8,
+    "wrong_values": 9
    }
   },
   "09-merge": {
    "attempted": 18,
    "passed": 16,
    "failures": {
-    "wrong_shape": 16,
-    "wrong_columns": 8,
-    "wrong_values": 2,
-    "exception": 6
+    "wrong_shape": 11,
+    "wrong_columns": 8
    }
   },
   "10-pivot-table": {
    "attempted": 15,
    "passed": 12,
    "failures": {
-    "wrong_values": 2,
-    "wrong_index": 11,
-    "wrong_columns": 6,
-    "exception": 2
+    "wrong_columns": 4,
+    "wrong_values": 10
    }
   },
   "11-dates": {
    "attempted": 14,
    "passed": 8,
    "failures": {
-    "exception": 12,
-    "wrong_dtype": 6,
-    "syntax": 5,
-    "wrong_values": 5
+    "wrong_columns": 11,
+    "wrong_dtype": 9
    }
   },
   "12-string-methods": {
    "attempted": 13,
    "passed": 13,
    "failures": {
-    "exception": 6,
-    "syntax": 2,
-    "wrong_shape": 4,
-    "wrong_columns": 7,
-    "wrong_values": 4
+    "wrong_values": 8
    }
   },
   "13-apply-and-map": {
    "attempted": 12,
    "passed": 11,
    "failures": {
-    "exception": 5,
-    "wrong_shape": 3,
-    "wrong_columns": 2,
-    "wrong_values": 2,
-    "syntax": 3
+    "wrong_values": 7,
+    "wrong_columns": 5,
+    "exception": 2
    }
   },
   "14-top-n-per-group": {
    "attempted": 10,
    "passed": 10,
    "failures": {
-    "wrong_order": 7,
-    "exception": 3,
-    "wrong_shape": 6,
-    "wrong_values": 3
+    "wrong_order": 5,
+    "wrong_values": 5,
+    "wrong_shape": 4
    }
   },
   "15-clean-up-inventory": {
    "attempted": 10,
    "passed": 9,
    "failures": {
-    "exception": 8,
-    "wrong_values": 7,
-    "syntax": 1,
-    "wrong_columns": 3,
-    "wrong_shape": 1
+    "wrong_dtype": 7,
+    "wrong_shape": 2,
+    "wrong_index": 2
    }
   }
  }
