@@ -1,7 +1,8 @@
 // Runs Python (Pyodide + pandas) off the main thread.
 import { PACKAGES, PYODIDE_BASE } from "../config.ts";
 import drillsSource from "../../grader/drills.py?raw";
-import type { RunRequest } from "../lib/types.ts";
+import variantsSource from "../../grader/variants.py?raw";
+import type { RunRequest, VariantRequest } from "../lib/types.ts";
 
 interface Ctx {
   postMessage(message: unknown): void;
@@ -19,6 +20,7 @@ interface Pyodide {
 const ctx = self as unknown as Ctx;
 let py: Pyodide | undefined;
 let drills: { run: (...args: unknown[]) => string } | undefined;
+let makeVariant: ((...args: unknown[]) => string) | undefined;
 
 let loaded = 0;
 const urls = new Set<string>();
@@ -57,14 +59,16 @@ async function init() {
   progress("Loading pandas");
   await py.loadPackage(PACKAGES);
   py.FS.writeFile("/home/pyodide/drills.py", drillsSource);
+  py.FS.writeFile("/home/pyodide/variants.py", variantsSource);
   const info = py.runPython(`
 import sys
 sys.path.insert(0, "/home/pyodide")
-import drills, pandas, numpy
+import drills, variants, pandas, numpy
 f"Python {sys.version.split()[0]}, pandas {pandas.__version__}"
 `) as string;
   // keep our own handle on run(), so later student code cannot swap it out
   drills = { run: py.pyimport("drills").run };
+  makeVariant = (py.pyimport("variants") as unknown as { variant_json: (...args: unknown[]) => string }).variant_json;
   // scripts loaded with import() do not go through fetch, so read them from the resource timing list too
   let transferred = 0;
   for (const e of performance.getEntriesByType("resource") as PerformanceResourceTiming[]) {
@@ -75,12 +79,24 @@ f"Python {sys.version.split()[0]}, pandas {pandas.__version__}"
   ctx.postMessage({ type: "ready", info, urls: [...urls], transferred, decoded: loaded });
 }
 
+/** The student's own copy of the data files (the originals when the seed is 0). */
+function dataFor(data: Record<string, string>, exerciseId: string | undefined, seed: number | undefined): Record<string, string> {
+  if (!seed || !exerciseId || !makeVariant) return data;
+  return JSON.parse(makeVariant(JSON.stringify(data), exerciseId, seed)) as Record<string, string>;
+}
+
 ctx.onmessage = (event: MessageEvent) => {
-  const msg = event.data as { type: string; id?: number; req?: RunRequest };
-  if (msg.type === "run" && msg.id !== undefined && msg.req && py && drills) {
+  const msg = event.data as { type: string; id?: number; req?: RunRequest & VariantRequest };
+  if (msg.type === "variant" && msg.id !== undefined && msg.req && py && makeVariant) {
+    try {
+      ctx.postMessage({ type: "variant", id: msg.id, data: dataFor(msg.req.data, msg.req.exerciseId, msg.req.seed) });
+    } catch (e) {
+      ctx.postMessage({ type: "failure", id: msg.id, message: String(e) });
+    }
+  } else if (msg.type === "run" && msg.id !== undefined && msg.req && py && drills) {
     try {
       const r = msg.req;
-      const json = drills.run(r.code, py.toPy(r.data), r.solution, r.check, r.mode);
+      const json = drills.run(r.code, py.toPy(dataFor(r.data, r.exerciseId, r.seed)), r.solution, r.check, r.mode);
       ctx.postMessage({ type: "result", id: msg.id, result: JSON.parse(json) });
     } catch (e) {
       ctx.postMessage({ type: "failure", id: msg.id, message: String(e) });

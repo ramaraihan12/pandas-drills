@@ -51,9 +51,19 @@ export type RunMode = "run" | "check";
 export interface RunRequest {
   mode: RunMode;
   code: string;
+  /** The original data files; the worker turns them into this student's variant when seed is not 0. */
   data: Record<string, string>;
   solution: string;
   check: string;
+  exerciseId?: string;
+  /** 0 or missing: the original data (solo mode). */
+  seed?: number;
+}
+
+export interface VariantRequest {
+  exerciseId: string;
+  data: Record<string, string>;
+  seed: number;
 }
 
 /** Results made on the page side, not by Python. */

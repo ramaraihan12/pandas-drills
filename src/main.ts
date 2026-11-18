@@ -9,6 +9,7 @@ import { API_URL, ApiError, classesEnabled, createApi, type SubmissionBody } fro
 import { createSubmissionQueue } from "./lib/queue.ts";
 import { parseRoute } from "./lib/route.ts";
 import { createSessions } from "./lib/session.ts";
+import { variantSeed } from "./lib/seed.ts";
 import { keepTeacherKey } from "./lib/teacherKey.ts";
 import { renderDemo, renderJoin, renderNewClass, renderTeach, type ClassUiDeps } from "./classes-ui.ts";
 import type { Bundle, Exercise, RunMode } from "./lib/types.ts";
@@ -35,6 +36,7 @@ const els = {
   badge: $("done-badge"),
   output: $("output"),
   data: $("data-preview"),
+  variantNote: $("variant-note"),
   engine: $("engine"),
   engineText: $("engine-text"),
   engineBar: $<HTMLProgressElement>("engine-bar"),
@@ -135,10 +137,51 @@ function renderList() {
 
 // ---------- data preview ----------
 
+/** In class mode every student gets their own copy of the data; solo mode (seed 0) keeps the original. */
+function currentSeed(): number {
+  const active = classesEnabled ? sessions.active() : null;
+  return active ? variantSeed(active.code, active.session.nickname) : 0;
+}
+
+const originalData = (ex: Exercise): Record<string, string> => Object.fromEntries(ex.data.map((f) => [f, bundle.data[f] ?? ""]));
+const variantCache = new Map<string, Record<string, string>>();
+let dataTicket = 0;
+
+/** The data files the student works with: the originals, or their variant (made by the engine, once per exercise and seed). */
+async function dataFor(ex: Exercise, seed: number): Promise<Record<string, string> | null> {
+  if (!seed) return originalData(ex);
+  const key = `${ex.id}:${seed}`;
+  const cached = variantCache.get(key);
+  if (cached) return cached;
+  const made = await runner.variant({ exerciseId: ex.id, data: originalData(ex), seed });
+  if (made) variantCache.set(key, made);
+  return made;
+}
+
 function renderData(ex: Exercise) {
+  const seed = currentSeed();
+  els.variantNote.hidden = seed === 0;
+  if (seed === 0) {
+    drawData(ex, originalData(ex));
+    return;
+  }
+  const ticket = ++dataTicket;
+  els.data.textContent = "";
+  const wait = document.createElement("p");
+  wait.className = "muted small";
+  wait.textContent = "Making your copy of the data...";
+  els.data.append(wait);
+  void dataFor(ex, seed).then((data) => {
+    if (ticket !== dataTicket) return; // another exercise or class was opened meanwhile
+    if (data) drawData(ex, data);
+    else wait.textContent = "Could not make your copy of the data. Reload the page and try again.";
+  });
+}
+
+function drawData(ex: Exercise, data: Record<string, string>) {
   els.data.textContent = "";
   ex.data.forEach((file, i) => {
-    const rows = parseCsv(bundle.data[file] ?? "");
+    const rows = parseCsv(data[file] ?? "");
     const [head = [], ...body] = rows;
     const det = document.createElement("details");
     det.open = i === 0;
@@ -239,9 +282,11 @@ async function go(mode: RunMode) {
   const out = await runner.run({
     mode,
     code,
-    data: Object.fromEntries(current.data.map((f) => [f, bundle.data[f] ?? ""])),
+    data: originalData(current),
     solution: current.solution,
     check: current.check,
+    exerciseId: current.id,
+    seed: currentSeed(),
   });
   busy = false;
   els.output.removeAttribute("aria-busy");
@@ -299,6 +344,7 @@ const classDeps: ClassUiDeps = {
     const active = sessions.active();
     if (active) queue.keepOnly(active.code); // submissions waiting for an older class would only be refused
     renderClassBadge();
+    renderData(current); // a new class means a new copy of the data
   },
   leaveClass,
 };
@@ -367,6 +413,7 @@ async function leaveClass(code: string): Promise<boolean> {
     open(current);
   }
   renderClassBadge();
+  renderData(current);
   return true;
 }
 
