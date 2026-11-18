@@ -36,6 +36,41 @@ beforeEach(async () => {
   ]);
 });
 
+describe("report for the dashboard", () => {
+  it("counts failure kinds, tries to pass and the first passing code hash, without code", async () => {
+    const cls = await makeClass();
+    const ann = await join(cls.code, "Ann");
+    const bo = await join(cls.code, "Bo");
+    const cy = await join(cls.code, "Cy");
+    const send = (token: string, over: Record<string, unknown>) => call("POST", "/submissions", { token, body: submission(over) });
+    await send(ann, { passed: false, kind: "wrong_shape", code: "result = 0" });
+    await send(ann, { passed: false, kind: "wrong_shape", code: "result = 0" });
+    await send(ann, { code: "result = df[['a']]  # first pass" });
+    await send(ann, { code: "result = something_else" }); // after the first pass: must not change the hash
+    await send(bo, { code: "result = df[['a']]\n\n# note   " }); // same code once normalised
+    await send(cy, { passed: false, kind: "syntax", code: "result = (" });
+    const data = (await (await call("GET", `/classes/${cls.code}/report`, { token: cls.teacherKey })).json()) as any;
+    const row = (n: string) => data.students.find((s: any) => s.nickname === n).results["01-select-columns"];
+    expect(row("Ann")).toMatchObject({ attempts: 4, passed: true, triesToPass: 3 });
+    expect(row("Ann").lastAt).toBeTruthy();
+    expect(row("Ann").firstPassHash).toMatch(/^[0-9a-f]{16}$/);
+    expect(row("Bo")).toMatchObject({ attempts: 1, triesToPass: 1, firstPassHash: row("Ann").firstPassHash });
+    expect(row("Cy")).toMatchObject({ passed: false, triesToPass: null, firstPassHash: null });
+    expect(data.perExercise["01-select-columns"].failures).toEqual({ wrong_shape: 2, syntax: 1 });
+    expect(data.perExercise["02-filter-rows"].failures).toEqual({});
+    expect(JSON.stringify(data)).not.toContain("something_else");
+  });
+
+  it("stores a hash of the normalised code", async () => {
+    const cls = await makeClass();
+    const t = await join(cls.code, "Ann");
+    await call("POST", "/submissions", { token: t, body: submission({ code: "x  =  1   # hi\n\n" }) });
+    const row = await env.DB.prepare("SELECT code, code_hash FROM submissions").first<{ code: string; code_hash: string }>();
+    expect(row?.code).toBe("x  =  1   # hi\n\n");
+    expect(row?.code_hash).toMatch(/^[0-9a-f]{64}$/);
+  });
+});
+
 describe("happy path", () => {
   it("creates, joins, submits, reports and deletes", async () => {
     const cls = await makeClass();
@@ -63,7 +98,7 @@ describe("happy path", () => {
     expect(annRow.results["01-select-columns"].firstPassAt).toBeTruthy();
     const boRow = data.students.find((s: any) => s.nickname === "Bo");
     expect(boRow.results["01-select-columns"]).toMatchObject({ attempts: 1, passed: false, firstPassAt: null, lastKind: "syntax" });
-    expect(data.perExercise["01-select-columns"]).toEqual({ attempted: 2, passed: 1 });
+    expect(data.perExercise["01-select-columns"]).toEqual({ attempted: 2, passed: 1, failures: { wrong_values: 1, syntax: 1 } });
 
     const list = await call("GET", `/classes/${cls.code}/submissions?student=${annRow.id}&exercise=01-select-columns`, { token: cls.teacherKey });
     const att = ((await list.json()) as any).attempts;

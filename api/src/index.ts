@@ -1,4 +1,5 @@
 import { SUBMISSION_KINDS } from "../../src/lib/kinds.ts";
+import { normalizeCode } from "../../src/lib/normalize.ts";
 import exerciseIds from "./generated/exercise-ids.json";
 import { bearer, randomCode, randomId, randomSecret, sha256Hex, timingSafeEqual } from "./util.ts";
 
@@ -214,8 +215,9 @@ async function submit(request: Request, env: Env) {
   if ((recent?.n ?? 0) >= LIMITS.submissionsPerHour) {
     throw new HttpError(429, "That is a lot of checks in one hour. Please wait a bit and try again.");
   }
-  await env.DB.prepare("INSERT INTO submissions (class_id, student_id, exercise_id, passed, kind, code, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)")
-    .bind(student.class_id, student.id, body.exerciseId, body.passed ? 1 : 0, body.kind, body.code, now)
+  const codeHash = await sha256Hex(normalizeCode(body.code));
+  await env.DB.prepare("INSERT INTO submissions (class_id, student_id, exercise_id, passed, kind, code, code_hash, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+    .bind(student.class_id, student.id, body.exerciseId, body.passed ? 1 : 0, body.kind, body.code, codeHash, now)
     .run();
   return { status: 204, data: null };
 }
@@ -226,36 +228,63 @@ interface Cell {
   attempts: number;
   passed: number;
   first_pass_at: number | null;
+  last_at: number;
+  tries_to_pass: number;
+  first_pass_hash: string | null;
   last_kind: string;
 }
 
+/** Enough of the hash to tell code apart inside one class, and short enough to keep the report small. */
+const HASH_CHARS = 16;
+
 async function report(request: Request, env: Env, code: string) {
   const cls = await requireTeacher(request, env, code);
-  const [students, cells] = await env.DB.batch([
+  const [students, cells, failures] = await env.DB.batch([
     env.DB.prepare("SELECT id, nickname, created_at FROM students WHERE class_id = ? ORDER BY nickname_norm").bind(cls.id),
     env.DB.prepare(
       `SELECT s.student_id, s.exercise_id, COUNT(*) AS attempts, MAX(s.passed) AS passed,
               MIN(CASE WHEN s.passed = 1 THEN s.created_at END) AS first_pass_at,
+              MAX(s.created_at) AS last_at,
+              SUM(CASE WHEN fp.id IS NOT NULL AND s.id <= fp.id THEN 1 ELSE 0 END) AS tries_to_pass,
+              MAX(fp.code_hash) AS first_pass_hash,
               (SELECT x.kind FROM submissions x
                 WHERE x.class_id = s.class_id AND x.student_id = s.student_id AND x.exercise_id = s.exercise_id
                 ORDER BY x.created_at DESC, x.id DESC LIMIT 1) AS last_kind
-         FROM submissions s WHERE s.class_id = ? GROUP BY s.student_id, s.exercise_id`,
-    ).bind(cls.id),
+         FROM submissions s
+         LEFT JOIN (SELECT student_id, exercise_id, MIN(id) AS id FROM submissions WHERE class_id = ? AND passed = 1 GROUP BY student_id, exercise_id) f
+                ON f.student_id = s.student_id AND f.exercise_id = s.exercise_id
+         LEFT JOIN submissions fp ON fp.id = f.id
+         WHERE s.class_id = ? GROUP BY s.student_id, s.exercise_id`,
+    ).bind(cls.id, cls.id),
+    env.DB.prepare("SELECT exercise_id, kind, COUNT(*) AS n FROM submissions WHERE class_id = ? AND passed = 0 GROUP BY exercise_id, kind").bind(cls.id),
   ]);
   const iso = (ms: number | null) => (ms === null ? null : new Date(ms).toISOString());
   const byStudent = new Map<string, Record<string, unknown>>();
-  const perExercise: Record<string, { attempted: number; passed: number }> = Object.fromEntries(
-    exerciseIds.map((id) => [id, { attempted: 0, passed: 0 }]),
+  const perExercise: Record<string, { attempted: number; passed: number; failures: Record<string, number> }> = Object.fromEntries(
+    exerciseIds.map((id) => [id, { attempted: 0, passed: 0, failures: {} }]),
   );
   for (const c of (cells?.results ?? []) as unknown as Cell[]) {
     const mine = byStudent.get(c.student_id) ?? {};
-    mine[c.exercise_id] = { attempts: c.attempts, passed: c.passed === 1, firstPassAt: iso(c.first_pass_at), lastKind: c.last_kind };
+    const passed = c.passed === 1;
+    mine[c.exercise_id] = {
+      attempts: c.attempts,
+      passed,
+      firstPassAt: iso(c.first_pass_at),
+      lastAt: iso(c.last_at),
+      lastKind: c.last_kind,
+      triesToPass: passed ? c.tries_to_pass : null,
+      firstPassHash: c.first_pass_hash ? c.first_pass_hash.slice(0, HASH_CHARS) : null,
+    };
     byStudent.set(c.student_id, mine);
     const agg = perExercise[c.exercise_id];
     if (agg) {
       agg.attempted += 1;
-      if (c.passed === 1) agg.passed += 1;
+      if (passed) agg.passed += 1;
     }
+  }
+  for (const f of (failures?.results ?? []) as unknown as { exercise_id: string; kind: string; n: number }[]) {
+    const agg = perExercise[f.exercise_id];
+    if (agg) agg.failures[f.kind] = f.n;
   }
   return {
     status: 200,
