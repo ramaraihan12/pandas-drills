@@ -5,6 +5,11 @@ import { formatClientFailure, formatFeedback, formatProgress, type Feedback } fr
 import { parseCsv, variableName } from "./lib/csv.ts";
 import { renderInline, renderMarkdown } from "./lib/markdown.ts";
 import { createStore } from "./lib/storage.ts";
+import { API_URL, ApiError, classesEnabled, createApi, type SubmissionBody } from "./lib/api.ts";
+import { createSubmissionQueue } from "./lib/queue.ts";
+import { parseRoute } from "./lib/route.ts";
+import { createSessions } from "./lib/session.ts";
+import { renderJoin, renderNewClass, renderTeach, type ClassUiDeps } from "./classes-ui.ts";
 import type { Bundle, Exercise, RunMode } from "./lib/types.ts";
 import { Runner, type EngineState } from "./runner.ts";
 import { PROGRESS_ESTIMATE_BYTES, TIME_LIMIT_MS } from "./config.ts";
@@ -34,6 +39,12 @@ const els = {
   engineBar: $<HTMLProgressElement>("engine-bar"),
   engineInfo: $("engine-info"),
   main: $("main"),
+  layout: document.querySelector<HTMLElement>(".layout")!,
+  classView: $("class-view"),
+  classBadge: $("class-badge"),
+  classBadgeText: $("class-badge-text"),
+  leaveClass: $("leave-class"),
+  teachLink: $("teach-link"),
 };
 
 let current: Exercise = bundle.exercises[0]!;
@@ -223,15 +234,24 @@ async function go(mode: RunMode) {
   busy = true;
   refreshButtons();
   els.output.setAttribute("aria-busy", "true");
+  const code = editor.getCode();
   const out = await runner.run({
     mode,
-    code: editor.getCode(),
+    code,
     data: Object.fromEntries(current.data.map((f) => [f, bundle.data[f] ?? ""])),
     solution: current.solution,
     check: current.check,
   });
   busy = false;
   els.output.removeAttribute("aria-busy");
+  if (mode === "check") {
+    recordCheck({
+      exerciseId: current.id,
+      passed: out.ok ? out.result.passed : false,
+      kind: out.ok ? out.result.kind : out.failure.kind,
+      code,
+    });
+  }
   if (out.ok) {
     showFeedback(formatFeedback(out.result, mode));
     if (mode === "check" && out.result.passed) markDone(current.id);
@@ -239,6 +259,59 @@ async function go(mode: RunMode) {
     showFeedback(formatClientFailure(out.failure, TIME_LIMIT_MS / 1000));
   }
   refreshButtons();
+}
+
+// ---------- classes (only when the build has an API address) ----------
+
+const sessions = createSessions();
+const api = createApi(API_URL);
+const queue = createSubmissionQueue(async (item) => {
+  try {
+    await api.submit(item.token, item.body);
+    return "ok";
+  } catch (err) {
+    // 429 and server errors may pass later; anything else will never be accepted
+    if (err instanceof ApiError) return err.status === 429 || err.status >= 500 ? "retry" : "drop";
+    return "retry"; // offline
+  }
+});
+
+/** Never awaited by the grading: the submission is queued and sent in the background. */
+function recordCheck(body: SubmissionBody) {
+  if (!classesEnabled) return;
+  const active = sessions.active();
+  if (active) queue.enqueue({ classCode: active.code, token: active.session.token, body });
+}
+
+function renderClassBadge() {
+  const active = classesEnabled ? sessions.active() : null;
+  els.classBadge.hidden = !active;
+  if (active) els.classBadgeText.textContent = `Class: ${active.session.name} \u00b7 ${active.session.nickname}`;
+}
+
+const classDeps: ClassUiDeps = {
+  host: els.classView,
+  api,
+  sessions,
+  exerciseHash: () => `#/${current.id}`,
+  onSessionChange: renderClassBadge,
+};
+
+function applyRoute() {
+  const route = classesEnabled ? parseRoute(location.hash) : { view: "exercise" as const };
+  const inClassView = route.view !== "exercise";
+  els.layout.hidden = inClassView;
+  document.body.classList.toggle("in-class", inClassView);
+  els.classView.hidden = !inClassView;
+  if (route.view === "new-class") renderNewClass(classDeps);
+  else if (route.view === "join") void renderJoin(classDeps, route.code);
+  else if (route.view === "teach") void renderTeach(classDeps, route.code, route.key);
+  if (inClassView) {
+    document.title = "Classes - pandas drills";
+    els.classView.focus({ preventScroll: true });
+  } else {
+    document.title = `${current.title} - pandas drills`;
+  }
 }
 
 function markDone(id: string) {
@@ -285,6 +358,7 @@ editor = createEditor($("editor-host"), {
 });
 
 window.addEventListener("hashchange", () => {
+  applyRoute();
   const id = idFromHash();
   const ex = bundle.exercises.find((e) => e.id === id);
   if (ex && ex.id !== current.id) {
@@ -316,6 +390,20 @@ $("reset").addEventListener("click", () => {
 const start = bundle.exercises.find((e) => e.id === idFromHash()) ?? bundle.exercises.find((e) => e.id === progress.last) ?? bundle.exercises[0]!;
 open(start);
 refreshButtons();
+
+if (classesEnabled) {
+  els.teachLink.hidden = false;
+  els.leaveClass.addEventListener("click", () => {
+    const active = sessions.active();
+    if (!active || !confirm("Leave this class on this device? Your nickname's results stay with your teacher, but you would have to join again to be recorded.")) return;
+    sessions.leave(active.code);
+    renderClassBadge();
+  });
+  window.addEventListener("online", () => void queue.flush());
+  renderClassBadge();
+  void queue.flush();
+}
+applyRoute();
 
 // ---------- offline cache ----------
 

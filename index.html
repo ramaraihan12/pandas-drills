@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
+    <meta name="referrer" content="no-referrer" />
     <meta name="description" content="pandas exercises that run and grade themselves in your browser. No install, no server." />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <title>pandas drills</title>
@@ -15,6 +16,10 @@
         <h1>pandas drills</h1>
         <p class="note">Everything, including the checking, runs in your browser. That makes this practice, not an exam.</p>
       </div>
+      <div id="class-badge" class="class-badge" hidden>
+        <span id="class-badge-text"></span>
+        <button id="leave-class" class="link" type="button">Leave class</button>
+      </div>
       <button id="nav-toggle" class="btn ghost" type="button" aria-expanded="false" aria-controls="exercise-nav">
         Exercises <span id="progress-count" class="count"></span>
       </button>
@@ -24,6 +29,8 @@
       <p id="engine-text">Getting Python ready...</p>
       <progress id="engine-bar" max="100" value="0" aria-label="Python download progress"></progress>
     </div>
+
+    <section id="class-view" class="class-view" tabindex="-1" hidden></section>
 
     <div class="layout">
       <nav id="exercise-nav" class="nav" aria-label="Exercises">
@@ -63,7 +70,7 @@
         </section>
       </main>
     </div>
-    <footer class="foot"><span id="engine-info"></span></footer>
+    <footer class="foot"><span id="engine-info"></span> <a id="teach-link" class="teach-link" href="#/new-class" hidden>Teaching? Create a class</a></footer>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
