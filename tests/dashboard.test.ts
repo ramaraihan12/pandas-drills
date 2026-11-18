@@ -80,3 +80,10 @@ describe("demo file", () => {
     expect(JSON.stringify(demo)).not.toMatch(/"code"/);
   });
 });
+
+describe("studentCount", () => {
+  it("says student or students", async () => {
+    const { studentCount } = await import("../src/lib/dashboard.ts");
+    expect([studentCount(1), studentCount(3)]).toEqual(["1 student", "3 students"]);
+  });
+});

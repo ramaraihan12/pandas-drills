@@ -48,6 +48,15 @@ try {
   ok(/#\/join\/[A-Z2-9]{6}$/.test(studentLink), `student link ${studentLink.replace(/^.*#/, "#")}`);
   ok(/#\/teach\/[A-Z2-9]{6}\/[A-Za-z0-9_-]{43}$/.test(teacherLink), "teacher link has the key in the fragment");
   ok((await teacher.textContent("#class-view")).includes("can't be recovered"), "warning about the private link");
+  ok((await teacher.textContent("#class-view")).includes("open the teacher link in a private window"), "warning mentions a private window");
+  const keyField = teacher.locator('input[aria-label="Teacher link (private)"]');
+  ok((await keyField.getAttribute("type")) === "password", "teacher link is masked by default");
+  ok((await teacher.locator('input[aria-label="Student link"]').getAttribute("type")) === "text", "student link is not masked");
+  await teacher.click('button[aria-label="Show the teacher link (private)"]');
+  ok((await keyField.getAttribute("type")) === "text", "Show reveals the teacher link");
+  await teacher.click('button[aria-label="Show the teacher link (private)"]');
+  ok((await keyField.getAttribute("type")) === "password", "Hide masks it again");
+  ok((await teacher.locator('button[aria-label="Copy the teacher link (private)"]').count()) === 1, "teacher link has a Copy button");
 
   // two students, two browser contexts
   const results = {};
@@ -73,6 +82,18 @@ try {
   await teacher.goto(teacherLink);
   await teacher.reload();
   await teacher.waitForSelector("table.heatmap");
+  const code = teacherLink.match(/#\/teach\/([A-Z2-9]{6})\//)[1];
+  const hashNow = await teacher.evaluate(() => location.hash);
+  ok(hashNow === `#/teach/${code}`, `the key left the address bar (${hashNow})`);
+  ok(!(await teacher.evaluate(() => history.length > 0 && document.referrer + location.href)).includes(teacherLink.split("/").pop()), "the URL no longer holds the key");
+  const stored = await teacher.evaluate((c) => sessionStorage.getItem(`pandas-drills:teacher:${c}`), code);
+  ok(!!stored && teacherLink.endsWith(stored), "the key is in sessionStorage for this tab");
+  const other = await teacherCtx.newPage();
+  await other.goto(WEB + `#/teach/${code}`);
+  await other.waitForSelector("text=Open your teacher link again", { timeout: 15_000 });
+  ok(true, "a new tab without the key asks for the saved link");
+  await other.close();
+  ok((await teacher.textContent("#dash-caveat")).includes("practice data, not exam marks"), "dashboard says it is practice data");
   const rows = await teacher.locator("table.heatmap tbody tr").allTextContents();
   ok(rows.length === 2, "teacher sees two students");
   ok(rows.some((r) => r.startsWith("Ann") && r.includes("\u2713")), "Ann passed in 1 attempt");
@@ -90,6 +111,41 @@ try {
   const csv = await (await import("node:fs/promises")).readFile(await dl.path(), "utf8");
   ok(csv.includes("nickname,exercise,attempts,passed,first_pass_time") && csv.includes("Ann,01-select-columns,1,yes,"), "CSV export has the rows");
   await teacher.screenshot({ path: "e2e/out/teacher.png", fullPage: true });
+
+  // lock joining
+  await teacher.click("#toggle-joining");
+  await teacher.waitForSelector("text=This class is closed to new students.", { timeout: 15_000 });
+  const lateCtx = await browser.newContext();
+  const late = await lateCtx.newPage();
+  await late.goto(studentLink);
+  await late.fill("#nickname", "Cy");
+  await late.click("button[type=submit]");
+  await late.waitForSelector("text=This class is closed to new students", { timeout: 15_000 });
+  ok(true, "a closed class refuses a new student");
+  await teacher.click("#toggle-joining");
+  await teacher.waitForSelector("text=New students can join", { timeout: 15_000 });
+  ok(true, "joining reopened");
+
+  // "Not <nickname>?" on a shared computer
+  const annPage = await results.Ann.newPage();
+  await annPage.goto(studentLink);
+  await annPage.reload();
+  await annPage.waitForSelector("#not-you", { timeout: 15_000 });
+  ok((await annPage.textContent("#not-you")).includes("Not Ann? Leave and join as yourself"), "join page offers Not Ann?");
+  await annPage.click("#not-you");
+  ok(await annPage.locator("#leave-clear").isChecked(), "clearing drafts and done marks is on by default");
+  await annPage.click("#leave-confirm");
+  await annPage.waitForSelector("#nickname", { timeout: 15_000 });
+  ok(true, "after leaving, the join form is back");
+  const left = await annPage.evaluate(() => [localStorage.getItem("pandas-drills:classes:v1"), localStorage.getItem("pandas-drills:v1")]);
+  ok(!left[0].includes("Ann") && !left[1].includes('"done":{"'), "this device forgot the session and the done marks");
+  await annPage.close();
+
+  // remove a student
+  teacher.on("dialog", (d) => d.accept());
+  await teacher.click('button[aria-label="Remove Bo and their results"]');
+  await teacher.waitForFunction(() => document.querySelectorAll("table.heatmap tbody tr").length === 1, null, { timeout: 15_000 });
+  ok((await teacher.locator("table.heatmap tbody tr").first().textContent()).startsWith("Ann"), "Bo was removed, Ann is still there");
 
   // delete the class
   await teacher.click("text=Delete class");

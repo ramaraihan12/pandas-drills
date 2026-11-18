@@ -35,8 +35,11 @@ export interface ReportCell {
 export interface Report {
   name: string;
   expiresAt: string;
+  /** False when the teacher has closed the class to new students. Absent in the demo. */
+  joiningOpen?: boolean;
   exercises: string[];
   students: { id: string; nickname: string; joinedAt: string; results: Record<string, ReportCell> }[];
+  /** `failures` counts distinct students per kind of failed check (site faults left out). */
   perExercise: Record<string, { attempted: number; passed: number; failures?: Record<string, number> }>;
 }
 
@@ -78,6 +81,8 @@ export function createApi(base: string, doFetch: Fetch = (...a) => fetch(...a)) 
     report: (code: string, key: string) => request<Report>("GET", `/classes/${enc(code)}/report`, { token: key }),
     attempts: (code: string, key: string, student: string, exercise: string) =>
       request<{ attempts: Attempt[] }>("GET", `/classes/${enc(code)}/submissions?student=${enc(student)}&exercise=${enc(exercise)}`, { token: key }),
+    removeStudent: (code: string, key: string, studentId: string) => request<void>("DELETE", `/classes/${enc(code)}/students/${enc(studentId)}`, { token: key }),
+    setJoining: (code: string, key: string, open: boolean) => request<void>("POST", `/classes/${enc(code)}/joining`, { body: { open }, token: key }),
     deleteClass: (code: string, key: string) => request<void>("DELETE", `/classes/${enc(code)}`, { token: key }),
   };
 }

@@ -3,6 +3,7 @@ import { ApiError, createApi, type SubmissionBody } from "../src/lib/api.ts";
 import { createSubmissionQueue, type QueuedSubmission, type SendResult } from "../src/lib/queue.ts";
 import { joinLink, parseRoute, teachLink } from "../src/lib/route.ts";
 import { createSessions } from "../src/lib/session.ts";
+import { forgetTeacherKey, keepTeacherKey, readTeacherKey } from "../src/lib/teacherKey.ts";
 
 function memoryStorage(): Storage {
   const m = new Map<string, string>();
@@ -144,5 +145,58 @@ describe("routes and sessions", () => {
     expect(s.active()).toBeNull();
     expect(s.get("ABC234")).toBeNull();
     expect(store.getItem("pandas-drills:classes:v1")).not.toContain("tok");
+  });
+});
+
+describe("teacher key in the tab", () => {
+  it("is kept per class code in session storage and can be forgotten", () => {
+    const st = memoryStorage();
+    keepTeacherKey("ABC234", "k".repeat(43), () => st);
+    expect(st.getItem("pandas-drills:teacher:ABC234")).toBe("k".repeat(43));
+    expect(readTeacherKey("ABC234", () => st)).toBe("k".repeat(43));
+    expect(readTeacherKey("ZZZ999", () => st)).toBeNull();
+    forgetTeacherKey("ABC234", () => st);
+    expect(readTeacherKey("ABC234", () => st)).toBeNull();
+  });
+  it("falls back to memory when storage throws", () => {
+    const broken = () => ({ getItem: () => { throw new Error("blocked"); }, setItem: () => { throw new Error("blocked"); }, removeItem: () => { throw new Error("blocked"); } }) as unknown as Storage;
+    keepTeacherKey("MEM234", "abcdefghijklmnop", broken);
+    expect(readTeacherKey("MEM234", broken)).toBe("abcdefghijklmnop");
+  });
+  it("parses the address with and without the key", () => {
+    expect(parseRoute("#/teach/abc234")).toEqual({ view: "teach", code: "ABC234" });
+    expect(parseRoute("#/teach/ABC234/abcdefghijklmnop_-")).toMatchObject({ key: "abcdefghijklmnop_-" });
+  });
+});
+
+describe("shared computers", () => {
+  it("joining a class drops the sessions of other classes", () => {
+    const s = createSessions(mem());
+    s.join("AAA222", { name: "A", nickname: "Ann", token: "t1" });
+    s.join("BBB333", { name: "B", nickname: "Ann", token: "t2" });
+    expect(s.get("AAA222")).toBeNull();
+    expect(s.active()?.code).toBe("BBB333");
+  });
+  it("dropClass flushes first and then forgets what is left for that class", async () => {
+    const sent: string[] = [];
+    let online = true;
+    const q = createSubmissionQueue(async (i) => {
+      if (!online) return "retry";
+      sent.push(i.body.code);
+      return "ok";
+    }, mem());
+    online = false;
+    q.enqueue({ ...item(1), classCode: "AAA222" });
+    q.enqueue({ ...item(2), classCode: "BBB333" });
+    online = true;
+    await q.dropClass("AAA222");
+    expect(sent).toEqual(["result = 1", "result = 2"]); // flushed while online
+    online = false;
+    q.enqueue({ ...item(3), classCode: "AAA222" });
+    q.enqueue({ ...item(4), classCode: "BBB333" });
+    await q.dropClass("AAA222");
+    expect(q.size()).toBe(1);
+    q.keepOnly("CCC444");
+    expect(q.size()).toBe(0);
   });
 });

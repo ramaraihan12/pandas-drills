@@ -47,6 +47,11 @@ export function exerciseName(id: string): string {
   return id.replace(/-/g, " ");
 }
 
+/** "3 students" for a problem count in the exercise table. */
+export function studentCount(n: number): string {
+  return `${n} student${n === 1 ? "" : "s"}`;
+}
+
 export interface ExerciseStats {
   id: string;
   attempted: number;

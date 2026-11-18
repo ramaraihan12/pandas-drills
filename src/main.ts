@@ -9,6 +9,7 @@ import { API_URL, ApiError, classesEnabled, createApi, type SubmissionBody } fro
 import { createSubmissionQueue } from "./lib/queue.ts";
 import { parseRoute } from "./lib/route.ts";
 import { createSessions } from "./lib/session.ts";
+import { keepTeacherKey } from "./lib/teacherKey.ts";
 import { renderDemo, renderJoin, renderNewClass, renderTeach, type ClassUiDeps } from "./classes-ui.ts";
 import type { Bundle, Exercise, RunMode } from "./lib/types.ts";
 import { Runner, type EngineState } from "./runner.ts";
@@ -294,8 +295,80 @@ const classDeps: ClassUiDeps = {
   api,
   sessions,
   exerciseHash: () => `#/${current.id}`,
-  onSessionChange: renderClassBadge,
+  onSessionChange: () => {
+    const active = sessions.active();
+    if (active) queue.keepOnly(active.code); // submissions waiting for an older class would only be refused
+    renderClassBadge();
+  },
+  leaveClass,
 };
+
+/** A small modal: leave the class on this device, and optionally clear this device's drafts and done marks. */
+function askLeave(nickname: string): Promise<{ leave: boolean; clear: boolean }> {
+  return new Promise((resolve) => {
+    const dlg = document.createElement("dialog");
+    dlg.id = "leave-dialog";
+    dlg.setAttribute("aria-labelledby", "leave-title");
+    const clear = document.createElement("input");
+    clear.type = "checkbox";
+    clear.id = "leave-clear";
+    clear.checked = true;
+    const label = document.createElement("label");
+    label.htmlFor = "leave-clear";
+    label.className = "check-line";
+    label.append(clear, " Also clear my saved code and done marks on this device");
+    const title = document.createElement("h2");
+    title.id = "leave-title";
+    title.textContent = "Leave this class on this device?";
+    const text = document.createElement("p");
+    text.textContent = `${nickname}'s results stay with the teacher. Checks that are still waiting to be sent are sent first, and nothing more is recorded from this device until you join a class again.`;
+    const yes = document.createElement("button");
+    yes.type = "button";
+    yes.className = "btn primary";
+    yes.id = "leave-confirm";
+    yes.textContent = "Leave class";
+    const no = document.createElement("button");
+    no.type = "button";
+    no.className = "btn ghost";
+    no.textContent = "Cancel";
+    const row = document.createElement("div");
+    row.className = "actions";
+    row.append(yes, no);
+    dlg.append(title, text, label, row);
+    const finish = (leave: boolean) => {
+      const wantClear = clear.checked;
+      dlg.close();
+      dlg.remove();
+      resolve({ leave, clear: wantClear });
+    };
+    yes.addEventListener("click", () => finish(true));
+    no.addEventListener("click", () => finish(false));
+    dlg.addEventListener("cancel", (e) => {
+      e.preventDefault();
+      finish(false);
+    });
+    document.body.append(dlg);
+    dlg.showModal();
+    no.focus();
+  });
+}
+
+async function leaveClass(code: string): Promise<boolean> {
+  const session = sessions.get(code);
+  if (!session) return false;
+  const answer = await askLeave(session.nickname);
+  if (!answer.leave) return false;
+  await queue.dropClass(code); // sends what it can first, then forgets the rest
+  sessions.leave(code);
+  if (answer.clear) {
+    progress.done = {};
+    progress.drafts = {};
+    store.save(progress);
+    open(current);
+  }
+  renderClassBadge();
+  return true;
+}
 
 function applyRoute() {
   const parsed = parseRoute(location.hash);
@@ -308,7 +381,14 @@ function applyRoute() {
   if (route.view === "new-class") renderNewClass(classDeps);
   else if (route.view === "join") void renderJoin(classDeps, route.code);
   else if (route.view === "demo") void renderDemo(classDeps, `${import.meta.env.BASE_URL}demo/report.json`);
-  else if (route.view === "teach") void renderTeach(classDeps, route.code, route.key);
+  else if (route.view === "teach") {
+    if (route.key) {
+      // the key leaves the address bar at once and lives in sessionStorage for this tab
+      keepTeacherKey(route.code, route.key);
+      history.replaceState(null, "", `${location.pathname}${location.search}#/teach/${route.code}`);
+    }
+    void renderTeach(classDeps, route.code);
+  }
   if (inClassView) {
     document.title = route.view === "demo" ? "Demo class - pandas drills" : "Classes - pandas drills";
     els.classView.focus({ preventScroll: true });
@@ -398,9 +478,7 @@ if (classesEnabled) {
   els.teachLink.hidden = false;
   els.leaveClass.addEventListener("click", () => {
     const active = sessions.active();
-    if (!active || !confirm("Leave this class on this device? Your nickname's results stay with your teacher, but you would have to join again to be recorded.")) return;
-    sessions.leave(active.code);
-    renderClassBadge();
+    if (active) void leaveClass(active.code);
   });
   window.addEventListener("online", () => void queue.flush());
   renderClassBadge();

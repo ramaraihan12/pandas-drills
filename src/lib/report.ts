@@ -25,6 +25,24 @@ export async function loadAttempts(api: Api, code: string, key: string, student:
   }
 }
 
+export async function removeStudent(api: Api, code: string, key: string, studentId: string): Promise<Loaded<null>> {
+  try {
+    await api.removeStudent(code, key, studentId);
+    return { ok: true, value: null };
+  } catch (err) {
+    return fail(err);
+  }
+}
+
+export async function setJoining(api: Api, code: string, key: string, open: boolean): Promise<Loaded<null>> {
+  try {
+    await api.setJoining(code, key, open);
+    return { ok: true, value: null };
+  } catch (err) {
+    return fail(err);
+  }
+}
+
 export async function removeClass(api: Api, code: string, key: string): Promise<Loaded<null>> {
   try {
     await api.deleteClass(code, key);

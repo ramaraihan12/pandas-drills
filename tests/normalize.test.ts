@@ -32,3 +32,21 @@ describe("normalizeCode", () => {
     expect(normalizeCode("x = 'oops\ny  =  2")).toBe("x = 'oops\ny = 2");
   });
 });
+
+describe("normalizeCode on hostile input", () => {
+  it("stays fast on 8 KB of whitespace", () => {
+    const inputs = [
+      " ".repeat(8192) + "x",
+      "x" + " ".repeat(8190) + "y",
+      "a =" + " \t".repeat(4000) + "\n",
+      ("x" + " ".repeat(60) + "\n").repeat(130),
+      " ".repeat(8192),
+    ];
+    for (const text of inputs) {
+      const t0 = performance.now();
+      normalizeCode(text);
+      expect(performance.now() - t0).toBeLessThan(100);
+    }
+    expect(normalizeCode("x = 1" + " ".repeat(8000) + "\n")).toBe("x = 1");
+  });
+});

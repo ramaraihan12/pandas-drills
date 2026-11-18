@@ -13,7 +13,10 @@ export function normalizeCode(source: string): string {
 
   const endLine = () => {
     // blank or trailing space only matters outside strings, and this is only called there
-    const trimmed = line.replace(/[ \t]+$/, "");
+    // a loop, not a regex: a trailing-space pattern backtracks quadratically on long runs of spaces
+    let end = line.length;
+    while (end > 0 && (line.charCodeAt(end - 1) === 32 || line.charCodeAt(end - 1) === 9)) end--;
+    const trimmed = line.slice(0, end);
     if (trimmed.trim() !== "") lines.push(trimmed);
     line = "";
   };

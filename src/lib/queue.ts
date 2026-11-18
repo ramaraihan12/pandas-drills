@@ -69,5 +69,17 @@ export function createSubmissionQueue(
     void flush();
   }
 
-  return { enqueue, flush, size: () => load().length };
+  /** Sends what it can, then forgets whatever is still waiting for this class (the student left it). */
+  async function dropClass(classCode: string): Promise<void> {
+    await flush(); // may be the run that is already going
+    await flush(); // a second pass, in case that run had just given up
+    save(load().filter((i) => i.classCode !== classCode));
+  }
+
+  /** Forgets submissions that belong to any other class. */
+  function keepOnly(classCode: string): void {
+    save(load().filter((i) => i.classCode === classCode));
+  }
+
+  return { enqueue, flush, dropClass, keepOnly, size: () => load().length };
 }

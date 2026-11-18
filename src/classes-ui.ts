@@ -5,7 +5,8 @@ import { el } from "./dom.ts";
 import { renderDashboard } from "./dashboard-ui.ts";
 import { cellLabel } from "./lib/dashboard.ts";
 import { kindLabel } from "./lib/kinds.ts";
-import { loadAttempts, loadDemoReport, loadReport, removeClass } from "./lib/report.ts";
+import { loadAttempts, loadDemoReport, loadReport, removeClass, removeStudent, setJoining } from "./lib/report.ts";
+import { forgetTeacherKey, readTeacherKey } from "./lib/teacherKey.ts";
 import { joinLink, teachLink } from "./lib/route.ts";
 import type { createSessions } from "./lib/session.ts";
 
@@ -18,6 +19,8 @@ export interface ClassUiDeps {
   /** Where "back to the exercises" goes, and what happens after joining. */
   exerciseHash: () => string;
   onSessionChange: () => void;
+  /** Leaves the class on this device (asks what to clear). Resolves true when the student left. */
+  leaveClass: (code: string) => Promise<boolean>;
 }
 
 function errorText(err: unknown): string {
@@ -45,6 +48,25 @@ function linkRow(label: string, url: string) {
   btn.setAttribute("aria-label", `Copy the ${label.toLowerCase()}`);
   btn.addEventListener("click", () => void copy(url, input, btn));
   return el("div", { class: "link-row" }, el("p", { class: "sub" }, label), el("div", { class: "copy-line" }, input, btn));
+}
+
+/** A row for a secret link: hidden by default, with a Show toggle and a Copy button. */
+function secretRow(label: string, url: string) {
+  const input = el("input", { type: "password", readOnly: true, value: url, class: "link-input", autocomplete: "off" });
+  input.setAttribute("aria-label", label);
+  const show = el("button", { type: "button", class: "btn ghost" }, "Show");
+  show.setAttribute("aria-pressed", "false");
+  show.setAttribute("aria-label", `Show the ${label.toLowerCase()}`);
+  show.addEventListener("click", () => {
+    const hidden = input.type === "password";
+    input.type = hidden ? "text" : "password";
+    show.textContent = hidden ? "Hide" : "Show";
+    show.setAttribute("aria-pressed", String(hidden));
+  });
+  const btn = el("button", { type: "button", class: "btn" }, "Copy");
+  btn.setAttribute("aria-label", `Copy the ${label.toLowerCase()}`);
+  btn.addEventListener("click", () => void copy(url, input, btn));
+  return el("div", { class: "link-row" }, el("p", { class: "sub" }, label), el("div", { class: "copy-line" }, input, show, btn));
 }
 
 type Shell = Pick<ClassUiDeps, "host" | "exerciseHash">;
@@ -90,13 +112,14 @@ export function renderNewClass(deps: ClassUiDeps) {
           el("h2", {}, "Your class is ready"),
           linkRow("Student link", joinLink(origin, base, made.code)),
           el("p", { class: "muted small" }, "Share this one with your students. They open it, pick a nickname and start."),
-          linkRow("Teacher link (private)", teachLink(origin, base, made.code, made.teacherKey)),
+          secretRow("Teacher link (private)", teachLink(origin, base, made.code, made.teacherKey)),
           el(
             "div",
             { class: "fb fail" },
             el("p", { class: "fb-title" }, "Keep the teacher link private"),
             el("p", {}, "Anyone with it can see your class's results and delete the class. It can't be recovered, so save it somewhere safe now."),
-            el("p", {}, `The class and all its data are deleted after 180 days (on ${expires}) or when you delete it.`),
+            el("p", {}, "On a shared or classroom computer, open the teacher link in a private window."),
+            el("p", {}, `The class and all its data are deleted automatically within a day of ${expires} (180 days), or when you delete it.`),
           ),
           back(deps),
         ),
@@ -133,6 +156,10 @@ export async function renderJoin(deps: ClassUiDeps, code: string) {
     return;
   }
   if (existing) {
+    const notYou = el("button", { type: "button", class: "link", id: "not-you" }, `Not ${existing.nickname}? Leave and join as yourself`);
+    notYou.addEventListener("click", async () => {
+      if (await deps.leaveClass(code)) void renderJoin(deps, code);
+    });
     show(
       deps,
       el(
@@ -141,6 +168,7 @@ export async function renderJoin(deps: ClassUiDeps, code: string) {
         el("h2", {}, info.name),
         el("p", {}, `You are in this class as ${existing.nickname}.`),
         el("a", { href: deps.exerciseHash(), class: "btn primary" }, "Go to the exercises"),
+        notYou,
       ),
     );
     return;
@@ -185,7 +213,7 @@ export async function renderJoin(deps: ClassUiDeps, code: string) {
         el(
           "p",
           { class: "small" },
-          "Your nickname, the code you check and whether it passed, for this class only. No email, no IP address. It is deleted after 180 days or when the teacher deletes the class.",
+          "Your nickname, the code you check and whether it passed, for this class only. No email, no IP address. It is deleted automatically after 180 days, or sooner when the teacher deletes the class.",
         ),
       ),
       back(deps),
@@ -196,7 +224,21 @@ export async function renderJoin(deps: ClassUiDeps, code: string) {
 
 // ---------- teacher results ----------
 
-export async function renderTeach(deps: ClassUiDeps, code: string, key: string) {
+export async function renderTeach(deps: ClassUiDeps, code: string) {
+  const key = readTeacherKey(code);
+  if (!key) {
+    show(
+      deps,
+      el(
+        "section",
+        { class: "panel narrow" },
+        el("h2", {}, "Open your teacher link again"),
+        el("p", {}, "The teacher key is only kept while this tab is open, and it is not in the address bar. Open your saved teacher link again to see the results."),
+        back(deps),
+      ),
+    );
+    return;
+  }
   show(deps, el("section", { class: "panel" }, el("p", { class: "muted" }, "Loading results...")));
   const loaded = await loadReport(deps.api, code, key);
   if (!loaded.ok) {
@@ -250,20 +292,66 @@ export async function renderTeach(deps: ClassUiDeps, code: string, key: string) 
       yes.disabled = false;
       return;
     }
+    forgetTeacherKey(code);
     show(deps, el("section", { class: "panel narrow" }, el("h2", {}, "Class deleted"), el("p", {}, "The class and all its data are gone."), back(deps)));
   });
 
+  // teacher actions: close or open joining, remove a student
+  const manageStatus = el("p", { class: "form-error", role: "alert" });
+  const manage = () => {
+    const open = report.joiningOpen !== false;
+    const lock = el("button", { type: "button", class: "btn", id: "toggle-joining" }, open ? "Close joining" : "Open joining");
+    lock.addEventListener("click", async () => {
+      lock.disabled = true;
+      const res = await setJoining(deps.api, code, key, !open);
+      if (!res.ok) {
+        manageStatus.textContent = res.message;
+        lock.disabled = false;
+        return;
+      }
+      void renderTeach(deps, code);
+    });
+    const people = report.students.map((s) => {
+      const rm = el("button", { type: "button", class: "btn ghost small" }, "Remove");
+      rm.setAttribute("aria-label", `Remove ${s.nickname} and their results`);
+      rm.addEventListener("click", async () => {
+        if (!confirm(`Remove ${s.nickname} and every check they made? This can't be undone.`)) return;
+        rm.disabled = true;
+        const res = await removeStudent(deps.api, code, key, s.id);
+        if (!res.ok) {
+          manageStatus.textContent = res.message;
+          rm.disabled = false;
+          return;
+        }
+        void renderTeach(deps, code);
+      });
+      return el("li", {}, el("span", {}, s.nickname), " ", rm);
+    });
+    return el(
+      "section",
+      { class: "dash-section", id: "dash-manage" },
+      el("h3", {}, "Manage the class"),
+      el("p", { class: "muted small", id: "joining-state" }, open ? "New students can join with the student link." : "This class is closed to new students. Students already in it can keep going."),
+      lock,
+      el("h4", {}, "Remove a student"),
+      el("p", { class: "muted small" }, "Removing a student deletes their nickname and all their results, for example when someone joined by mistake."),
+      people.length ? el("ul", { class: "plain", id: "student-list" }, ...people) : el("p", { class: "muted" }, "Nobody has joined yet."),
+      manageStatus,
+    );
+  };
+
   const refresh = el("button", { type: "button", class: "btn ghost" }, "Refresh");
-  refresh.addEventListener("click", () => void renderTeach(deps, code, key));
+  refresh.addEventListener("click", () => void renderTeach(deps, code));
   const expires = new Date(report.expiresAt).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
   show(
     deps,
     el(
       "section",
       { class: "panel" },
-      el("p", { class: "meta" }, `Class code ${code} · ${report.students.length} student${report.students.length === 1 ? "" : "s"} · deleted automatically on ${expires}`),
+      el("p", { class: "meta" }, `Class code ${code} · ${report.students.length} student${report.students.length === 1 ? "" : "s"} · deleted automatically within a day of ${expires}`),
       el("h2", {}, report.name),
       renderDashboard({ report, onCell, detail, fileStem: `class-${code}` }),
+      manage(),
       el("div", { class: "actions" }, refresh, del),
       confirmBox,
       back(deps),

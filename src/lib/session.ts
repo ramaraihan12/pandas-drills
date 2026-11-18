@@ -44,10 +44,8 @@ export function createSessions(getStorage: () => Storage | undefined = () => glo
       return load().classes[code] ?? null;
     },
     join(code: string, session: ClassSession) {
-      const s = load();
-      s.classes[code] = session;
-      s.active = code;
-      save(s);
+      // one class per device at a time: tokens of other classes would only be stale
+      save({ active: code, classes: { [code]: session } });
     },
     /** Forgets the token on this device. The student can join again with another nickname. */
     leave(code: string) {

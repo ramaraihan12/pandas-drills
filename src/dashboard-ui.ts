@@ -1,7 +1,7 @@
 // The teacher dashboard: heatmap, per-exercise numbers, stuck students, same-code hints and CSV export.
 // It only draws a Report. The same code serves a real class and the demo class.
 import type { Report, ReportCell } from "./lib/api.ts";
-import { cellLabel, cellState, cellText, exerciseName, exerciseStats, resultsCsv, sameCodeGroups, STATE_INFO, stuckStudents, type CellState } from "./lib/dashboard.ts";
+import { cellLabel, cellState, cellText, exerciseName, exerciseStats, resultsCsv, sameCodeGroups, STATE_INFO, studentCount, stuckStudents, type CellState } from "./lib/dashboard.ts";
 import { kindLabel } from "./lib/kinds.ts";
 import { el } from "./dom.ts";
 
@@ -92,7 +92,7 @@ function exerciseTable(report: Report): HTMLElement {
   wrap.setAttribute("aria-label", "Results for each exercise");
   const table = el("table", { class: "by-exercise" });
   const head = table.createTHead().insertRow();
-  for (const h of ["Exercise", "Passed / tried", "Pass rate", "Most common problems"]) head.append(el("th", { scope: "col" }, h));
+  for (const h of ["Exercise", "Passed / tried", "Pass rate", "Most common problems (by students)"]) head.append(el("th", { scope: "col" }, h));
   const body = table.createTBody();
   for (const st of exerciseStats(report)) {
     const tr = body.insertRow();
@@ -101,7 +101,7 @@ function exerciseTable(report: Report): HTMLElement {
     tr.insertCell().textContent = st.rate === null ? "not tried yet" : `${Math.round(st.rate * 100)}%`;
     const problems = tr.insertCell();
     problems.className = "wrap";
-    problems.textContent = st.topFailures.length ? st.topFailures.map((f) => `${f.label} (${f.count})`).join(", ") : st.attempted ? "no failed checks" : "";
+    problems.textContent = st.topFailures.length ? st.topFailures.map((f) => `${f.label} (${studentCount(f.count)})`).join(", ") : st.attempted ? "no failed checks" : "";
   }
   wrap.append(table);
   return wrap;
@@ -165,6 +165,7 @@ export function renderDashboard(opts: DashboardOptions): HTMLElement {
       { class: "dash-section", id: "dash-heatmap" },
       el("h3", {}, "Students and exercises"),
       el("p", { class: "muted small" }, "Select a cell to read that student's attempts. Arrow keys move between cells."),
+      el("p", { class: "muted small", id: "dash-caveat" }, "Results come from each student's browser; this is practice data, not exam marks."),
       legend(),
       heatmap(opts),
       opts.detail,

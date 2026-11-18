@@ -44,7 +44,7 @@ Solo practice needs no server. For my own students I also wanted to see who is s
 **The dashboard.** I wanted to see at a glance who needs me, so the teacher page has five parts:
 
 - a heatmap of students against exercises. Each cell says, in a symbol and in words for screen readers, whether the student passed on the first try, passed after several tries (with the count), tried and has not passed yet, or has not tried. It never relies on colour alone, scrolls sideways inside its own box on a phone, and the arrow keys move between cells;
-- for each exercise, how many students passed out of how many tried, and the three most common ways Checks failed, in plain words such as "wrong number of rows";
+- for each exercise, how many students passed out of how many tried, and the three most common ways Checks failed, in plain words such as "wrong number of rows", counted in distinct students (checker and page faults are left out);
 - a list of students who are stuck: three or more attempts on an exercise and no pass, most recent first;
 - a "same code" list: students whose first passing code is identical once comments, blank lines and extra spaces are ignored (the API stores a hash of that normalised code, never used for anything else). This is a hint, not proof. Short exercises often have exactly one obvious answer, so two honest students can match. I use it as a reason to ask a question, not to accuse anyone;
 - an Export CSV button with one row per student and exercise. It is built in the browser, and cells that start with `=`, `+`, `-` or `@` get a leading `'` so a spreadsheet cannot run them as formulas.
@@ -55,9 +55,13 @@ The class features are switched on once the API is deployed. Until then (and on 
 
 **What is stored:** the class name, each student's nickname, and for every Check the exercise, whether it passed, the kind of result, the code and the time. The teacher key and the student tokens are stored only as SHA-256 hashes. **What is not stored:** no email, no IP address, no user agent, no full names, no accounts. The Worker has logging switched off and never writes request bodies or headers anywhere.
 
-**Retention:** a class and everything in it is deleted 180 days after it was created, or at once when the teacher presses Delete class. There is no cron job: expired classes are cleaned up whenever someone creates a new class, and an expired class already looks gone because lookups ignore it.
+**Retention:** a class and everything in it is deleted 180 days after it was created, or at once when the teacher presses Delete class. A daily Cloudflare cron trigger (03:17 UTC) deletes expired classes in bounded batches, and the same cleanup also runs in small chunks when a class is created or joined and when a report is opened. An expired class already looks gone because lookups ignore it. D1 keeps a 7-day recovery window (Time Travel) after deletion, so deleted data can linger in backups for up to a week. The teacher can also remove a single student, or close the class to new students.
 
-**Limits** (to stay on the free plans and keep abuse small): 50 new classes a day across the whole site, 60 students per class, 120 Checks per student per hour, 8 KB of code per Check and 16 KB per request. A teacher link can't be recovered, because only its hash is kept.
+**Limits** (to stay on the free plans and keep abuse small): 50 new classes a day across the whole site, 60 students per class, 60 recorded Checks per student per hour, 4,000 per class, 6,250 a day across the whole site (one Check writes 8 D1 rows at most, so this keeps submissions to half of D1's 100,000 free row writes a day), 8 KB of code per Check and 16 KB per request. The teacher report reads small summary rows instead of every Check, about 960 rows for 60 students. A teacher link can't be recovered, because only its hash is kept. When a limit is hit the student's answers still work in the browser; they just are not recorded.
+
+**The teacher link.** The teacher key sits in the address fragment, which a browser never sends to a server. When the link is opened, the page moves the key into `sessionStorage` (this tab only) and rewrites the address to `#/teach/CODE`, so it is not left in the address bar or the history. Opening the dashboard in a new tab needs the saved link again. On a shared or classroom computer, use a private window.
+
+**Shared origin.** The site shares the origin `ramaraihan.is-a.dev` with other pages of the same account, so class tokens in `localStorage` are only as safe as that origin.
 
 **What this does not do:** a student can still fake a Check, because the grading runs in their browser (see the trade-offs below). The class view is a record of practice, not proof for an exam. If the network drops, a Check is kept in the browser and sent later; grading itself never waits for the network.
 
