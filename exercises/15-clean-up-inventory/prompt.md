@@ -15,4 +15,4 @@ data: inventory_raw.csv
 - duplicate rows are removed (keep the first one)
 - the table is sorted by `sku` and numbered 0, 1, 2 ... again
 
-Return all five columns: `sku`, `item`, `price`, `stock`, `restocked`.
+Return all five columns, in this order: `sku`, `item`, `price`, `stock`, `restocked`.

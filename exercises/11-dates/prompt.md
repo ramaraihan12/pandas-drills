@@ -6,6 +6,6 @@ difficulty: medium
 data: sensors.csv
 ---
 
-The `timestamp` column in `sensors` is plain text. Turn it into real dates and times, then find the **average temperature per calendar day** (across both sensors; missing temperatures are skipped).
+The `timestamp` column in `sensors` is plain text. Turn it into real dates and times, then find the **average temperature per calendar day** (across both sensors; missing temperatures are skipped; do not round).
 
-Return a table with two columns: `day` (a date, at midnight) and `avg_temp`. One row per day, oldest first.
+Return a table with two columns, in this order: `day` (a date, at midnight) and `avg_temp`. One row per day, oldest first.

@@ -74,6 +74,15 @@ def test_wrong_answer_fails_with_friendly_message(folder, wrong):
     assert "traceback" not in text
 
 
+ALT = [(f, a) for f in FOLDERS for a in sorted(f.glob("alt_*.py"))]
+
+
+@pytest.mark.parametrize("folder,alt", ALT, ids=lambda x: x.name)
+def test_alternative_answer_passes(folder, alt):
+    res = grade(folder, alt.read_text(encoding="utf-8"))
+    assert res["passed"], res
+
+
 def test_every_exercise_has_front_matter_and_files():
     for f in FOLDERS:
         meta, _ = load(f)

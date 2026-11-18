@@ -12,4 +12,4 @@ For each sales `channel`, calculate in one go:
 - `units`: the total `quantity`
 - `max_price`: the highest `unit_price`
 
-Return a table with the columns `channel`, `n_orders`, `units`, `max_price`. Row order does not matter.
+Return a table with the columns in this order: `channel`, `n_orders`, `units`, `max_price`. Row order does not matter.

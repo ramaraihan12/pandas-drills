@@ -13,4 +13,4 @@ Do these two steps, in this order:
 1. Fill the missing `humidity` values with the median of the `humidity` column.
 2. Then drop every row where `temperature` is missing.
 
-Return the cleaned table (all columns).
+Return the cleaned table (all columns, in their original order).

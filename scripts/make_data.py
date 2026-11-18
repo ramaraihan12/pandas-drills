@@ -88,12 +88,17 @@ for step in range(48):
         hum = "" if rng.random() < 0.09 else str(rng.randint(35, 80))
         sensors.append([rid, sensor, ts.strftime("%Y-%m-%d %H:%M:%S"), temp, hum])
         rid += 1
+# three humidity readings are raised so that the median changes once the gaps are filled
+# (exercise 06 needs the order of its two steps to matter)
+for row in sensors:
+    if row[0] in (53, 62, 73):
+        row[4] = {53: "82", 62: "86", 73: "90"}[row[0]]
 write("sensors.csv", ["reading_id", "sensor_id", "timestamp", "temperature", "humidity"], sensors)
 
 contacts = [
     [1, "  alice JOHNSON", " Alice.Johnson@Example.COM "],
     [2, "BOB smith", "bob@Mail.Test"],
-    [3, "carla  mendes ", "C.Mendes@Studio.Example"],
+    [3, "carla mendes ", "C.Mendes@Studio.Example"],
     [4, "dmitri Ivanov", " dmitri@Example.com"],
     [5, "  EVA lindqvist  ", "EVA@NORTH.example"],
     [6, "farid khan", "farid.khan@Mail.Test "],

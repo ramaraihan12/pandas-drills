@@ -8,4 +8,4 @@ data: orders.csv
 
 Add a column called `total` to `orders`. It is `quantity` multiplied by `unit_price`.
 
-Return the whole table: all the original columns plus `total` at the end.
+Return the whole table: all the original columns in their original order, plus `total` at the end.

@@ -128,7 +128,7 @@ main { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); outline:
 .fb.pass { border-color: var(--pass-border); background: var(--pass-bg); }
 .fb.fail { border-color: var(--fail-border); background: var(--fail-bg); }
 .fb.error { border-color: var(--error-border); background: var(--error-bg); }
-.fb p { margin: 0 0 6px; }
+.fb p { margin: 0 0 6px; white-space: pre-wrap; }
 .fb-title { font-weight: 700; }
 .fb pre { margin: 6px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
 .sub { margin: 10px 0 4px; font-weight: 600; font-size: 0.88rem; color: var(--muted); }

@@ -8,7 +8,7 @@ data: contacts_raw.csv
 
 The `contacts_raw` table has messy text: extra spaces and odd capital letters.
 
-Return a table with three columns:
+Return a table with three columns, in this order:
 
 - `contact_id` unchanged
 - `name`: spaces at both ends removed, and each word starting with a capital letter (`"  alice JOHNSON"` becomes `"Alice Johnson"`)
