@@ -72,14 +72,23 @@ try {
   // teacher opens the results
   await teacher.goto(teacherLink);
   await teacher.reload();
-  await teacher.waitForSelector("table.results");
-  const rows = await teacher.locator("table.results tbody tr").allTextContents();
+  await teacher.waitForSelector("table.heatmap");
+  const rows = await teacher.locator("table.heatmap tbody tr").allTextContents();
   ok(rows.length === 2, "teacher sees two students");
-  ok(rows.some((r) => r.startsWith("Ann") && r.includes("\u2713 1")), "Ann passed in 1 attempt");
+  ok(rows.some((r) => r.startsWith("Ann") && r.includes("\u2713")), "Ann passed in 1 attempt");
   ok(rows.some((r) => r.startsWith("Bo") && r.includes("\u2717 1")), "Bo has 1 failed attempt");
-  await teacher.locator("button.cell.ok").first().click();
+  await teacher.locator("button.cell.first").first().click();
   await teacher.waitForSelector("pre.attempt");
   ok((await teacher.textContent("pre.attempt")).includes("order_id"), "clicking a cell shows the code");
+  for (const id of ["dash-heatmap", "dash-exercises", "dash-stuck", "dash-same", "dash-export"]) ok(await teacher.locator(`#${id}`).isVisible(), `dashboard section ${id}`);
+  const row1 = (await teacher.locator("table.by-exercise tbody tr").first().textContent()) ?? "";
+  ok(row1.includes("1 / 2") && row1.includes("50%"), "exercise 1: 1 of 2 passed, 50%");
+  ok(row1.includes("wrong columns") || row1.includes("error while running"), "exercise 1 lists the failure kind in words");
+  ok((await teacher.locator("button.cell.open").count()) === 1, "Bo's cell is tried and not passed");
+  ok((await teacher.locator("table.heatmap tbody tr").first().locator("button.cell.none").count()) > 0, "untried exercises show as not tried");
+  const [dl] = await Promise.all([teacher.waitForEvent("download"), teacher.click("#export-csv")]);
+  const csv = await (await import("node:fs/promises")).readFile(await dl.path(), "utf8");
+  ok(csv.includes("nickname,exercise,attempts,passed,first_pass_time") && csv.includes("Ann,01-select-columns,1,yes,"), "CSV export has the rows");
   await teacher.screenshot({ path: "e2e/out/teacher.png", fullPage: true });
 
   // delete the class

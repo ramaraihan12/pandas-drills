@@ -39,7 +39,17 @@ The same `drills.py` file runs in the browser and in the pytest suite, with the 
 
 ## Classes
 
-Solo practice needs no server. For my own students I also wanted to see who is stuck, so there is an optional class mode. A teacher makes a class at `#/new-class` and gets two links: one for students and a private one for the teacher. A student opens the student link, picks a nickname and works as usual; from then on every **Check** sends the code and whether it passed to the class. The teacher link opens a table of students against exercises, and a click on a cell shows that student's attempts with their code.
+Solo practice needs no server. For my own students I also wanted to see who is stuck, so there is an optional class mode. A teacher makes a class at `#/new-class` and gets two links: one for students and a private one for the teacher. A student opens the student link, picks a nickname and works as usual; from then on every **Check** sends the code and whether it passed to the class. The teacher link opens a dashboard, and a click on a cell shows that student's attempts with their code.
+
+**The dashboard.** I wanted to see at a glance who needs me, so the teacher page has five parts:
+
+- a heatmap of students against exercises. Each cell says, in a symbol and in words for screen readers, whether the student passed on the first try, passed after several tries (with the count), tried and has not passed yet, or has not tried. It never relies on colour alone, scrolls sideways inside its own box on a phone, and the arrow keys move between cells;
+- for each exercise, how many students passed out of how many tried, and the three most common ways Checks failed, in plain words such as "wrong number of rows";
+- a list of students who are stuck: three or more attempts on an exercise and no pass, most recent first;
+- a "same code" list: students whose first passing code is identical once comments, blank lines and extra spaces are ignored (the API stores a hash of that normalised code, never used for anything else). This is a hint, not proof. Short exercises often have exactly one obvious answer, so two honest students can match. I use it as a reason to ask a question, not to accuse anyone;
+- an Export CSV button with one row per student and exercise. It is built in the browser, and cells that start with `=`, `+`, `-` or `@` get a leading `'` so a spreadsheet cannot run them as formulas.
+
+**Try it without a class.** [`#/demo-class`](https://ramaraihan.is-a.dev/pandas-drills/#/demo-class) shows the same dashboard for a made-up class of 18 students ("Student 01" and so on). It is a static file, `public/demo/report.json`, written by `node scripts/make-demo-class.mjs` from a fixed seed, so it needs no API and works on the live site today. Nothing in it is real, and it has no code to show.
 
 The class features are switched on once the API is deployed. Until then (and on today's live build) none of the class pages or links appear and the site behaves exactly as before. The API is a small Cloudflare Worker with a D1 database in [`api/`](api/README.md).
 
@@ -103,7 +113,7 @@ CI runs pytest, vitest, `tsc --noEmit` and `vite build` on every push, plus the 
 ## Roadmap
 
 1. Classes: a teacher makes a class, students join with a link and a nickname (built, waiting for the API to be deployed).
-2. A fuller teacher view: a heatmap of who is stuck on which exercise.
+2. A fuller teacher view: done, see the dashboard above.
 3. More exercises, and a few harder ones.
 
 ## License
