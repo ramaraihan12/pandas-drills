@@ -1,0 +1,61 @@
+order_id,customer_id,product,category,quantity,unit_price,channel,status,order_date
+1001,C014,Pen set,stationery,5,4.2,web,cancelled,2025-01-07
+1002,C003,Water bottle,outdoor,2,12.0,web,delivered,2025-01-25
+1003,C015,Headphones,electronics,5,59.0,web,returned,2025-02-15
+1004,C018,Pen set,stationery,2,4.2,web,delivered,2025-01-26
+1005,C002,Tent,outdoor,2,89.0,app,delivered,2025-01-15
+1006,C015,Tent,outdoor,4,89.0,web,delivered,2025-02-05
+1007,C015,Water bottle,outdoor,4,12.0,app,delivered,2025-03-10
+1008,C099,Tent,outdoor,6,89.0,web,delivered,2025-02-25
+1009,C008,Tent,outdoor,2,89.0,app,delivered,2025-02-14
+1010,C011,Desk lamp,home,3,22.5,web,cancelled,2025-02-07
+1011,C009,Planner,stationery,3,14.0,store,delivered,2025-03-11
+1012,C012,Notebook,stationery,5,3.5,store,cancelled,2025-03-21
+1013,C019,Water bottle,outdoor,5,12.0,app,delivered,2025-01-20
+1014,C008,Water bottle,outdoor,5,12.0,web,cancelled,2025-02-09
+1015,C014,Tent,outdoor,1,89.0,web,delivered,2025-03-29
+1016,C007,Backpack,bags,6,35.0,store,returned,2025-01-19
+1017,C009,Planner,stationery,1,14.0,web,returned,2025-03-07
+1018,C007,Headphones,electronics,2,59.0,store,delivered,2025-01-19
+1019,C009,Mug,home,2,8.0,store,delivered,2025-03-29
+1020,C005,Mug,home,2,8.0,store,shipped,2025-02-20
+1021,C003,Planner,stationery,2,14.0,web,shipped,2025-03-07
+1022,C019,Mug,home,2,8.0,web,delivered,2025-03-13
+1023,C012,Water bottle,outdoor,5,12.0,app,delivered,2025-02-17
+1024,C003,Desk lamp,home,3,22.5,store,cancelled,2025-01-20
+1025,C020,USB cable,electronics,5,7.5,store,shipped,2025-02-24
+1026,C011,Mug,home,6,8.0,web,returned,2025-01-16
+1027,C009,Planner,stationery,3,14.0,web,delivered,2025-01-15
+1028,C099,USB cable,electronics,2,7.5,store,cancelled,2025-03-25
+1029,C004,Pen set,stationery,3,4.2,app,returned,2025-01-24
+1030,C001,Notebook,stationery,1,3.5,store,returned,2025-03-16
+1031,C011,Tent,outdoor,2,89.0,app,returned,2025-02-08
+1032,C007,Desk lamp,home,1,22.5,store,shipped,2025-03-23
+1033,C019,Water bottle,outdoor,6,12.0,app,cancelled,2025-02-25
+1034,C011,Desk lamp,home,3,22.5,app,delivered,2025-01-26
+1035,C001,Mug,home,6,8.0,store,returned,2025-03-10
+1036,C018,USB cable,electronics,6,7.5,store,delivered,2025-01-20
+1037,C013,Headphones,electronics,4,59.0,web,delivered,2025-02-14
+1038,C003,Desk lamp,home,5,22.5,app,shipped,2025-01-13
+1039,C012,Water bottle,outdoor,3,12.0,web,delivered,2025-01-12
+1040,C017,Mug,home,2,8.0,store,shipped,2025-01-04
+1041,C004,Desk lamp,home,3,22.5,app,delivered,2025-02-14
+1042,C001,USB cable,electronics,3,7.5,app,delivered,2025-03-21
+1043,C001,Notebook,stationery,1,3.5,store,delivered,2025-03-27
+1044,C014,Desk lamp,home,2,22.5,store,delivered,2025-01-05
+1045,C011,Water bottle,outdoor,3,12.0,web,delivered,2025-03-18
+1046,C020,Planner,stationery,3,14.0,web,shipped,2025-01-31
+1047,C016,USB cable,electronics,2,7.5,web,returned,2025-01-24
+1048,C099,Pen set,stationery,6,4.2,app,delivered,2025-02-23
+1049,C009,Pen set,stationery,2,4.2,web,shipped,2025-02-04
+1050,C018,Water bottle,outdoor,4,12.0,web,delivered,2025-01-18
+1051,C017,Notebook,stationery,3,3.5,app,delivered,2025-01-16
+1052,C001,Headphones,electronics,3,59.0,web,delivered,2025-01-07
+1053,C012,Backpack,bags,3,35.0,store,delivered,2025-01-19
+1054,C003,Planner,stationery,6,14.0,web,delivered,2025-01-18
+1055,C005,Backpack,bags,5,35.0,web,delivered,2025-03-04
+1056,C002,Water bottle,outdoor,6,12.0,web,delivered,2025-01-27
+1057,C011,Pen set,stationery,6,4.2,app,delivered,2025-01-27
+1058,C019,Mug,home,4,8.0,web,delivered,2025-02-23
+1059,C018,Mug,home,5,8.0,web,delivered,2025-01-25
+1060,C007,Water bottle,outdoor,3,12.0,web,returned,2025-02-09

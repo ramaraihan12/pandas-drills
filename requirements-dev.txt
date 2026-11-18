@@ -1,0 +1,3 @@
+# Same pandas version the pinned Pyodide ships (see PYODIDE_VERSION in src/config.ts).
+pandas==3.0.2
+pytest==9.2.0
