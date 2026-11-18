@@ -37,6 +37,20 @@ The feedback is plain rules, in this order of cases:
 
 The same `drills.py` file runs in the browser and in the pytest suite, with the same pandas version, so what the tests check is what students get.
 
+## Classes
+
+Solo practice needs no server. For my own students I also wanted to see who is stuck, so there is an optional class mode. A teacher makes a class at `#/new-class` and gets two links: one for students and a private one for the teacher. A student opens the student link, picks a nickname and works as usual; from then on every **Check** sends the code and whether it passed to the class. The teacher link opens a table of students against exercises, and a click on a cell shows that student's attempts with their code.
+
+The class features are switched on once the API is deployed. Until then (and on today's live build) none of the class pages or links appear and the site behaves exactly as before. The API is a small Cloudflare Worker with a D1 database in [`api/`](api/README.md).
+
+**What is stored:** the class name, each student's nickname, and for every Check the exercise, whether it passed, the kind of result, the code and the time. The teacher key and the student tokens are stored only as SHA-256 hashes. **What is not stored:** no email, no IP address, no user agent, no full names, no accounts. The Worker has logging switched off and never writes request bodies or headers anywhere.
+
+**Retention:** a class and everything in it is deleted 180 days after it was created, or at once when the teacher presses Delete class. There is no cron job: expired classes are cleaned up whenever someone creates a new class, and an expired class already looks gone because lookups ignore it.
+
+**Limits** (to stay on the free plans and keep abuse small): 50 new classes a day across the whole site, 60 students per class, 120 Checks per student per hour, 8 KB of code per Check and 16 KB per request. A teacher link can't be recovered, because only its hash is kept.
+
+**What this does not do:** a student can still fake a Check, because the grading runs in their browser (see the trade-offs below). The class view is a record of practice, not proof for an exam. If the network drops, a Check is kept in the browser and sent later; grading itself never waits for the network.
+
 ## Trade-offs, honestly
 
 - **Browser grading can be faked.** The solution and the check ship to the browser. A student who wants to cheat can read them, or hard-code the answer. That is fine for practice, and it is why the page says so. An exam would need a server doing the grading, which is exactly what the later milestones add for the class view.
@@ -79,16 +93,18 @@ pytest              # every solution passes, wrong answers fail with the right m
 npm test            # vitest: bundle builder, feedback text, markdown, storage
 npm run typecheck
 npm run e2e         # local only: Playwright solves exercise 1, checks the hints, the time limit and offline
+(cd api && npm ci && npm test)   # the class API, run inside the Workers runtime with a local D1
 ```
 
-CI runs pytest, vitest, `tsc --noEmit` and `vite build` on every push. The Playwright test needs a browser download, so I run it locally and not in CI.
+The class end-to-end test (`e2e/classes.mjs`, also local only) needs the API running next to a build made with `VITE_API_URL=http://localhost:8787`; the steps are in [`api/README.md`](api/README.md).
+
+CI runs pytest, vitest, `tsc --noEmit` and `vite build` on every push, plus the API typecheck and tests as a separate job. The Playwright test needs a browser download, so I run it locally and not in CI.
 
 ## Roadmap
 
-1. A class link: a teacher makes a class, students open one link.
-2. A teacher view: a heatmap of who is stuck on which exercise.
-3. An API for that (Cloudflare Workers and D1), still free.
-4. More exercises, and a few harder ones.
+1. Classes: a teacher makes a class, students join with a link and a nickname (built, waiting for the API to be deployed).
+2. A fuller teacher view: a heatmap of who is stuck on which exercise.
+3. More exercises, and a few harder ones.
 
 ## License
 
