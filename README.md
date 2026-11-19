@@ -118,9 +118,10 @@ CI runs pytest, vitest, `tsc --noEmit` and `vite build` on every push, plus the 
 
 ## Roadmap
 
-1. Classes: a teacher makes a class, students join with a link and a nickname (built, waiting for the API to be deployed).
-2. A fuller teacher view: done, see the dashboard above.
-3. More exercises, and a few harder ones.
+1. Classes: a teacher makes a class, students join with a link and a nickname: done, the API is live on Cloudflare Workers.
+2. A pilot with my own students, to measure load times on school PCs and phones and see where they get stuck.
+3. A fuller teacher view: done, see the dashboard above.
+4. More exercises, and a few harder ones.
 
 ## License
 
